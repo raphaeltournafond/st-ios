@@ -74,6 +74,39 @@ struct ContentView: View {
     }
 }
 
+var centralManager: CBCentralManager!
+
+class BluetoothViewController: UIViewController {
+    private var centralManager: CBCentralManager!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        centralManager = CBCentralManager(delegate: self, queue: nil)
+    }
+}
+
+extension BluetoothViewController: CBCentralManagerDelegate {
+ 
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        switch central.state {
+            case .poweredOn:
+                centralManager.scanForPeripherals(withServices: nil)
+            case .poweredOff:
+                print("Please turn the Bluetooth ON")
+            case .resetting:
+                print("Resetting Bluetooth please wait")
+            case .unauthorized:
+                print("Please enable Bluetooth permission in app Settings")
+            case .unsupported:
+                print("Sorry, your device does not support Bluetooth and this app will not work as expected")
+            case .unknown:
+               print("Unknown Bluetooth state please wait")
+            @unknown default:
+                print("Unknown state")
+        }
+    }
+}
+
 #Preview {
     ContentView()
 }
