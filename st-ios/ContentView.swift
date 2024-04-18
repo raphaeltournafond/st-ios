@@ -10,7 +10,7 @@ import CoreBluetooth
 
 class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     @Published var peripherals: [CBPeripheral] = []
-    @Published var statuts: String = ""
+    @Published var stateMessage: String = ""
     var bluetoothState: CBManagerState = .unknown
     var centralManager: CBCentralManager!
     var connectedPeripheral: CBPeripheral?
@@ -33,18 +33,18 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         bluetoothState = central.state
         switch central.state {
             
-        case .unsupported:  statuts = "Bluetooth is not supported on your device"
-        case .unauthorized: statuts = "Please allow this app to use your device Bluetooth"
-        case .unknown:      statuts = "Unknown error, scanning not possible, restart your device Bluetooth"
-        case .resetting:    statuts = "Bluetooth is resetting... Please wait"
-        case .poweredOff:   statuts = "Please turn ON your Bluetooth"
+        case .unsupported:  stateMessage = "Bluetooth is not supported on your device"
+        case .unauthorized: stateMessage = "Please allow this app to use your device Bluetooth"
+        case .unknown:      stateMessage = "Unknown error, scanning not possible, restart your device Bluetooth"
+        case .resetting:    stateMessage = "Bluetooth is resetting... Please wait"
+        case .poweredOff:   stateMessage = "Please turn ON your Bluetooth"
             
         case .poweredOn:
-            statuts = "Bluetooth ON and ready for scanning"
+            stateMessage = "Bluetooth ON and ready for scanning"
         @unknown default:
-            statuts = "Bluetooth not available, restart your device and try again"
+            stateMessage = "Bluetooth not available, restart your device and try again"
         }
-        print(statuts)
+        print(stateMessage)
     }
 
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
@@ -121,7 +121,7 @@ struct ContentView: View {
             .disabled(bluetoothManager.bluetoothState != .poweredOn)
             
             if bluetoothManager.bluetoothState != .poweredOn {
-                Text(bluetoothManager.statuts)
+                Text(bluetoothManager.stateMessage)
                     .italic()
                     .foregroundStyle(Color.gray)
             }
