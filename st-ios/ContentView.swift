@@ -8,13 +8,16 @@
 import SwiftUI
 import CoreBluetooth
 
+// BluetoothManager class responsible for managing Bluetooth functionality.
 class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
+    // Published properties to trigger UI updates when their values change.
     @Published var peripherals: [CBPeripheral] = []
     @Published var stateMessage: String = ""
-    var bluetoothState: CBManagerState = .unknown
+    var bluetoothState: CBManagerState = .unknown // Track Bluetooth state
     var centralManager: CBCentralManager!
     var connectedPeripheral: CBPeripheral?
 
+    // Initialize the Bluetooth manager and set the central manager delegate.
     override init() {
         super.init()
         centralManager = CBCentralManager(delegate: self, queue: nil)
@@ -27,7 +30,8 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     func stopScanning() {
         centralManager.stopScan()
     }
-
+    
+    // Handle Bluetooth state updates.
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         peripherals.removeAll()
         bluetoothState = central.state
@@ -47,6 +51,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         print(stateMessage)
     }
 
+    // Handle the discovery of a peripheral.
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         if !peripherals.contains(peripheral) {
             peripherals.append(peripheral)
@@ -58,6 +63,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         centralManager.connect(peripheral, options: nil)
     }
     
+    // Handle successful connection to a peripheral.
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("Connected to peripheral: \(peripheral)")
         connectedPeripheral = peripheral
@@ -72,6 +78,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
             }
         }
 
+    // Handle the discovery of characteristics for a service on a peripheral.
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         guard let characteristics = service.characteristics else { return }
         for characteristic in characteristics {
