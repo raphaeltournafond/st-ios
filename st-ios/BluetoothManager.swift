@@ -42,12 +42,12 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
             
         case .unsupported:  stateMessage = "Bluetooth is not supported on your device"
         case .unauthorized: stateMessage = "Please allow this app to use your device Bluetooth"
-        case .unknown:      stateMessage = "Unknown error, scanning not possible, restart your device Bluetooth"
+        case .unknown:      stateMessage = "Unknown error, Bluetooth usage not possible, restart your device"
         case .resetting:    stateMessage = "Bluetooth is resetting... Please wait"
         case .poweredOff:   stateMessage = "Please turn ON your Bluetooth"
             
         case .poweredOn:
-            stateMessage = "Bluetooth ON and ready for scanning"
+            stateMessage = "Bluetooth ON and ready"
         @unknown default:
             stateMessage = "Bluetooth not available, restart your device and try again"
         }
