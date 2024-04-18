@@ -14,7 +14,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             if lastUUID != nil {
-                TrackingView(bluetoothManager: bluetoothManager)
+                TrackingView(bluetoothManager: bluetoothManager, deviceUUID: lastUUID!)
             } else {
                 ScanningView(bluetoothManager: bluetoothManager)
             }

@@ -10,43 +10,52 @@ import SwiftUI
 struct TrackingView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
     @State private var isTracking = false
+    @State private var isConnecting = true
+    let deviceUUID: String
 
     var body: some View {
         VStack {
-            Text("Connected to \(bluetoothManager.connectedPeripheral?.identifier.uuidString ?? "device")")
-                .font(.title)
-                .padding()
-
-            if !isTracking {
-                Button(action: {
-                    startTracking()
-                }) {
-                    Text("Start Tracking")
-                        .padding()
-                        .background(Color.green)
-                        .foregroundColor(Color.white)
-                        .cornerRadius(10)
-                }
-                .padding()
+            if isConnecting {
+                ProgressView("Connecting...")
+                    .padding()
             } else {
-                ScrollView {
-                    VStack {
-                        ForEach(bluetoothManager.receivedData, id: \.self) { data in
-                            Text(data)
-                                .padding()
+                Text("Connected to \(bluetoothManager.connectedPeripheral?.identifier.uuidString ?? "device")")
+                    .font(.title)
+                    .padding()
+                
+                if !isTracking {
+                    Button(action: {
+                        startTracking()
+                    }) {
+                        Text("Start Tracking")
+                            .padding()
+                            .background(Color.green)
+                            .foregroundColor(Color.white)
+                            .cornerRadius(10)
+                    }
+                    .padding()
+                } else {
+                    ScrollView {
+                        VStack {
+                            ForEach(bluetoothManager.receivedData, id: \.self) { data in
+                                Text(data)
+                                    .padding()
+                            }
                         }
                     }
-                }
-                Button(action: {
-                    stopTracking()
-                }) {
-                    Text("Stop Tracking")
-                        .padding()
-                        .background(Color.red)
-                        .foregroundColor(Color.white)
-                        .cornerRadius(10)
+                    Button(action: {
+                        stopTracking()
+                    }) {
+                        Text("Stop Tracking")
+                            .padding()
+                            .background(Color.red)
+                            .foregroundColor(Color.white)
+                            .cornerRadius(10)
+                    }
                 }
             }
+        }.onAppear {
+            bluetoothManager.connect(withUUID: deviceUUID)
         }
     }
 
