@@ -24,11 +24,24 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate {
     func stopScanning() {
         centralManager.stopScan()
     }
+    
+    func connect(to peripheral: CBPeripheral) {
+        print("connecting to " + (peripheral.name ?? "Unknown"))
+        centralManager.connect(peripheral, options: nil)
+    }
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        if central.state == .poweredOn {
-            startScanning()
-        } else {
+        switch (central.state) {
+            
+        case .unsupported:  print("CoreBluetooth BLE hardware is unsupported on this platform")
+        case .unauthorized: print("CoreBluetooth BLE state is unauthorized")
+        case .unknown:      print("CoreBluetooth BLE state is unknown")
+        case .resetting:    print("CoreBluetooth BLE is resetting")
+        case .poweredOff:   print("CoreBluetooth BLE hardware is powered off")
+            
+        case .poweredOn:
+            print("CoreBluetooth BLE hardware is powered on and ready")
+        @unknown default:
             print("Bluetooth not available")
         }
     }
@@ -69,7 +82,11 @@ struct ContentView: View {
             }
 
             List(bluetoothManager.peripherals, id: \.self) { peripheral in
-                Text(peripheral.name ?? "Unknown")
+                Button(action: {
+                    bluetoothManager.connect(to: peripheral)
+                }) {
+                    Text(peripheral.identifier.uuidString + " - " + (peripheral.name ?? "Unknown name"))
+                }
             }.navigationTitle("Peripherals")
         }
         .onDisappear {
@@ -96,13 +113,9 @@ struct ContentView: View {
         } else {
             startScanning()
             self.timer?.invalidate()
-            self.timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
+            self.timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
                 self.stopScanning()
             }
         }
     }
-}
-
-#Preview {
-    ContentView()
 }
