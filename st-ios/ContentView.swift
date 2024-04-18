@@ -10,6 +10,8 @@ import CoreBluetooth
 
 class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     @Published var peripherals: [CBPeripheral] = []
+    @Published var statuts: String = ""
+    var bluetoothState: CBManagerState = .unknown
     var centralManager: CBCentralManager!
     var connectedPeripheral: CBPeripheral?
 
@@ -27,19 +29,22 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     }
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        switch (central.state) {
+        peripherals.removeAll()
+        bluetoothState = central.state
+        switch central.state {
             
-        case .unsupported:  print("CoreBluetooth BLE hardware is unsupported on this platform")
-        case .unauthorized: print("CoreBluetooth BLE state is unauthorized")
-        case .unknown:      print("CoreBluetooth BLE state is unknown")
-        case .resetting:    print("CoreBluetooth BLE is resetting")
-        case .poweredOff:   print("CoreBluetooth BLE hardware is powered off")
+        case .unsupported:  statuts = "Bluetooth is not supported on your device"
+        case .unauthorized: statuts = "Please allow this app to use your device Bluetooth"
+        case .unknown:      statuts = "Unknown error, scanning not possible, restart your device Bluetooth"
+        case .resetting:    statuts = "Bluetooth is resetting... Please wait"
+        case .poweredOff:   statuts = "Please turn ON your Bluetooth"
             
         case .poweredOn:
-            print("CoreBluetooth BLE hardware is powered on and ready")
+            statuts = "Bluetooth ON and ready for scanning"
         @unknown default:
-            print("Bluetooth not available")
+            statuts = "Bluetooth not available, restart your device and try again"
         }
+        print(statuts)
     }
 
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
@@ -104,11 +109,18 @@ struct ContentView: View {
             }) {
                 Text(isScanning ? "Stop Scanning" : "Start Scanning")
                     .padding()
-                    .background(Color.blue)
-                    .foregroundColor(Color.white)
+                    .background(bluetoothManager.bluetoothState == .poweredOn ? Color.blue : Color.gray)
+                    .foregroundColor(bluetoothManager.bluetoothState == .poweredOn ? Color.white : Color.black)
                     .cornerRadius(10)
             }
             .padding()
+            .disabled(bluetoothManager.bluetoothState != .poweredOn)
+            
+            if bluetoothManager.bluetoothState != .poweredOn {
+                Text(bluetoothManager.statuts)
+                    .italic()
+                    .foregroundStyle(Color.gray)
+            }
 
             if isScanning {
                 ProgressView("Scanning...")
