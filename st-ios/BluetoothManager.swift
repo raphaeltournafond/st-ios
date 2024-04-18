@@ -15,6 +15,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     @Published var receivedData: [String] = []
     @Published var bluetoothState: CBManagerState = .unknown // Track Bluetooth state
     @Published var connectedPeripheral: CBPeripheral?
+    @Published var isTracking: Bool = false
     private var centralManager: CBCentralManager!
     private var targetPeripheralUUID: String?
     private var targetPeripheral: CBPeripheral?
@@ -113,6 +114,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
                     Thread.sleep(forTimeInterval: 0.1)
                 }
             }
+            self.centralManager.stopScan()
 
             // Return success or failure based on isConnected
             DispatchQueue.main.async {
@@ -123,6 +125,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
 
     
     func connect(to peripheral: CBPeripheral) {
+        disconnectFromPeripheral()
         receivedData = []
         print("connecting to \(peripheral.name ?? "Unknown")")
         centralManager.connect(peripheral, options: nil)
@@ -165,6 +168,13 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     // Handle the discovery of characteristics for a service on a peripheral.
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         guard let characteristics = service.characteristics else { return }
+        
+        // Check if tracking has started before initiating characteristic reading
+        guard isTracking else {
+            // Tracking has not started, exit the function
+            return
+        }
+        
         for characteristic in characteristics {
             if characteristic.properties.contains(.read) {
                 DispatchQueue.global().async {
