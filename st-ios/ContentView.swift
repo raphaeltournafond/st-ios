@@ -8,9 +8,10 @@
 import SwiftUI
 import CoreBluetooth
 
-class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate {
+class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     @Published var peripherals: [CBPeripheral] = []
     var centralManager: CBCentralManager!
+    var connectedPeripheral: CBPeripheral?
 
     override init() {
         super.init()
@@ -23,11 +24,6 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate {
     
     func stopScanning() {
         centralManager.stopScan()
-    }
-    
-    func connect(to peripheral: CBPeripheral) {
-        print("connecting to " + (peripheral.name ?? "Unknown"))
-        centralManager.connect(peripheral, options: nil)
     }
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -49,6 +45,44 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         if !peripherals.contains(peripheral) {
             peripherals.append(peripheral)
+        }
+    }
+    
+    func connect(to peripheral: CBPeripheral) {
+        print("connecting to \(peripheral.name ?? "Unknown")")
+        centralManager.connect(peripheral, options: nil)
+    }
+    
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+        print("Connected to peripheral: \(peripheral)")
+        connectedPeripheral = peripheral
+        connectedPeripheral?.delegate = self
+        connectedPeripheral?.discoverServices(nil)
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+            guard let services = peripheral.services else { return }
+            for service in services {
+                peripheral.discoverCharacteristics(nil, for: service)
+            }
+        }
+
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+        guard let characteristics = service.characteristics else { return }
+        for characteristic in characteristics {
+            if characteristic.properties.contains(.read) {
+                peripheral.readValue(for: characteristic)
+            }
+            if characteristic.properties.contains(.notify) {
+                peripheral.setNotifyValue(true, for: characteristic)
+            }
+        }
+    }
+
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+        if let data = characteristic.value {
+            let valueString = String(data: data, encoding: .utf8) ?? "Unable to convert data to String"
+            print("Received data: \(valueString)")
         }
     }
 }
