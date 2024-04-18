@@ -14,6 +14,9 @@
 		AEE232F32BCFB6BE00A1C071 /* st_iosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE232F22BCFB6BE00A1C071 /* st_iosTests.swift */; };
 		AEE232FD2BCFB6BE00A1C071 /* st_iosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE232FC2BCFB6BE00A1C071 /* st_iosUITests.swift */; };
 		AEE232FF2BCFB6BE00A1C071 /* st_iosUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE232FE2BCFB6BE00A1C071 /* st_iosUITestsLaunchTests.swift */; };
+		AEE2330C2BD13B7300A1C071 /* TrackingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE2330B2BD13B7300A1C071 /* TrackingView.swift */; };
+		AEE2330E2BD1484F00A1C071 /* ScanningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE2330D2BD1484F00A1C071 /* ScanningView.swift */; };
+		AEE233102BD148C900A1C071 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE2330F2BD148C900A1C071 /* BluetoothManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +47,9 @@
 		AEE232F82BCFB6BE00A1C071 /* st-iosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "st-iosUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AEE232FC2BCFB6BE00A1C071 /* st_iosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = st_iosUITests.swift; sourceTree = "<group>"; };
 		AEE232FE2BCFB6BE00A1C071 /* st_iosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = st_iosUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		AEE2330B2BD13B7300A1C071 /* TrackingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingView.swift; sourceTree = "<group>"; };
+		AEE2330D2BD1484F00A1C071 /* ScanningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanningView.swift; sourceTree = "<group>"; };
+		AEE2330F2BD148C900A1C071 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +104,9 @@
 				AEE232E32BCFB6BC00A1C071 /* ContentView.swift */,
 				AEE232E52BCFB6BE00A1C071 /* Assets.xcassets */,
 				AEE232E72BCFB6BE00A1C071 /* Preview Content */,
+				AEE2330B2BD13B7300A1C071 /* TrackingView.swift */,
+				AEE2330D2BD1484F00A1C071 /* ScanningView.swift */,
+				AEE2330F2BD148C900A1C071 /* BluetoothManager.swift */,
 			);
 			path = "st-ios";
 			sourceTree = "<group>";
@@ -258,7 +267,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				AEE232E42BCFB6BC00A1C071 /* ContentView.swift in Sources */,
+				AEE2330E2BD1484F00A1C071 /* ScanningView.swift in Sources */,
+				AEE2330C2BD13B7300A1C071 /* TrackingView.swift in Sources */,
 				AEE232E22BCFB6BC00A1C071 /* st_iosApp.swift in Sources */,
+				AEE233102BD148C900A1C071 /* BluetoothManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
