@@ -35,6 +35,17 @@ struct TrackingView: View {
                                 .cornerRadius(10)
                         }
                         .padding()
+                        
+                        Button(action: {
+                            bluetoothManager.removeLastConnectedUUID()
+                        }) {
+                            Text("Forget device")
+                                .padding()
+                                .background(Color.blue)
+                                .foregroundColor(Color.white)
+                                .cornerRadius(10)
+                        }
+                        .padding()
                     } else {
                         ScrollView {
                             VStack {
@@ -71,7 +82,7 @@ struct TrackingView: View {
                     Button(action: {
                         bluetoothManager.removeLastConnectedUUID()
                     }) {
-                        Text("Scan for another device")
+                        Text("Forget device")
                             .padding()
                             .background(Color.blue)
                             .foregroundColor(Color.white)

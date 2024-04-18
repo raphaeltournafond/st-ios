@@ -169,12 +169,6 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         guard let characteristics = service.characteristics else { return }
         
-        // Check if tracking has started before initiating characteristic reading
-        guard isTracking else {
-            // Tracking has not started, exit the function
-            return
-        }
-        
         for characteristic in characteristics {
             if characteristic.properties.contains(.read) {
                 DispatchQueue.global().async {
