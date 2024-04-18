@@ -16,7 +16,7 @@ struct TrackingView: View {
     var body: some View {
         VStack {
             if isConnecting {
-                ProgressView("Connecting...")
+                ProgressView("Connecting to \(deviceUUID)")
                     .padding()
             } else {
                 Text("Connected to \(bluetoothManager.connectedPeripheral?.identifier.uuidString ?? "device")")
@@ -55,7 +55,13 @@ struct TrackingView: View {
                 }
             }
         }.onAppear {
-            bluetoothManager.connect(withUUID: deviceUUID)
+            bluetoothManager.connect(withUUID: deviceUUID) { success in
+                if success {
+                    isConnecting = false
+                } else {
+                    // Connection failed, handle the failure
+                }
+            }
         }
     }
 

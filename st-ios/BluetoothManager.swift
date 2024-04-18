@@ -18,7 +18,10 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     private var centralManager: CBCentralManager!
     private var targetPeripheralUUID: String?
     private var targetPeripheral: CBPeripheral?
+    private var onBluetoothStateUpdate: ((CBManagerState) -> Void)?
     private let userDefaultsUUIDKey = "lastConnectedDeviceUUID"
+    private let powerOnTimeoutInterval: Double = 3.0
+    private let connectionTimeoutInterval: Double = 10.0
 
     // Initialize the Bluetooth manager and set the central manager delegate.
     override init() {
@@ -52,30 +55,74 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
             stateMessage = "Bluetooth not available, restart your device and try again"
         }
         print(stateMessage)
+        onBluetoothStateUpdate?(central.state)
     }
 
     // Handle the discovery of a peripheral.
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+        print(peripheral.identifier.uuidString)
         if targetPeripheralUUID != nil {
             if peripheral.identifier.uuidString == targetPeripheralUUID {
+                targetPeripheral = peripheral
                 centralManager.stopScan()
                 connect(to: peripheral)
             }
         } else {
+            // Store a reference to the discovered peripheral
             if !peripherals.contains(peripheral) {
                 peripherals.append(peripheral)
+                // Keep a reference to the peripheral
+                targetPeripheral = peripheral
             }
         }
     }
     
-    func connect(withUUID uuid: String) {
+    func connect(withUUID uuid: String, completion: @escaping (Bool) -> Void) {
         disconnectFromPeripheral()
+        // Check if Bluetooth is powered on
+        guard centralManager.state == .poweredOn else {
+            // Bluetooth is not powered on, wait for it to become powered on
+            var elapsedTime = 0.0
+            _ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                elapsedTime += 1.0
+                if self.centralManager.state == .poweredOn {
+                    timer.invalidate()
+                    self.connect(withUUID: uuid, completion: completion)
+                } else if elapsedTime >= self.powerOnTimeoutInterval {
+                    timer.invalidate()
+                    completion(false) // Timeout reached, notify completion handler of failure
+                }
+            }
+            return
+        }
+
+        // Bluetooth is powered on, proceed with connection
         targetPeripheralUUID = uuid
         centralManager.scanForPeripherals(withServices: nil, options: nil)
+
+        // Start timer to handle timeout
+        let timeoutDate = Date().addingTimeInterval(connectionTimeoutInterval)
+        // Check for connection or timeout asynchronously
+        DispatchQueue.global().async {
+            var isConnected = false
+            while !isConnected && Date() < timeoutDate {
+                if self.connectedPeripheral != nil {
+                    isConnected = true
+                } else {
+                    // Wait for a short interval before checking again
+                    Thread.sleep(forTimeInterval: 0.1)
+                }
+            }
+
+            // Return success or failure based on isConnected
+            DispatchQueue.main.async {
+                completion(isConnected)
+            }
+        }
     }
+
     
     func connect(to peripheral: CBPeripheral) {
-        disconnectFromPeripheral()
         receivedData = []
         print("connecting to \(peripheral.name ?? "Unknown")")
         centralManager.connect(peripheral, options: nil)
