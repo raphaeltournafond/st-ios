@@ -76,7 +76,9 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         guard let characteristics = service.characteristics else { return }
         for characteristic in characteristics {
             if characteristic.properties.contains(.read) {
-                peripheral.readValue(for: characteristic)
+                DispatchQueue.global().async {
+                    peripheral.readValue(for: characteristic)
+                }
             }
             if characteristic.properties.contains(.notify) {
                 peripheral.setNotifyValue(true, for: characteristic)
@@ -85,9 +87,11 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     }
 
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        if let data = characteristic.value {
-            let valueString = String(data: data, encoding: .utf8) ?? "Unable to convert data to String"
-            print("Received data: \(valueString)")
+        DispatchQueue.main.async {
+            if let data = characteristic.value {
+                let valueString = String(data: data, encoding: .utf8) ?? "Unable to convert data to String"
+                print("Received data: \(valueString)")
+            }
         }
     }
 }
