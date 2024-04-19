@@ -61,7 +61,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
 
     // Handle the discovery of a peripheral.
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        print(peripheral.identifier.uuidString)
+        print(peripheral.identifier.uuidString + " - " + (targetPeripheralUUID ?? "Nil"))
         if targetPeripheralUUID != nil {
             if peripheral.identifier.uuidString == targetPeripheralUUID {
                 targetPeripheral = peripheral
@@ -153,8 +153,9 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         return lastUUID
     }
     
-    func removeLastConnectedUUID() {
+    func forgetLastConnectedUUID() {
         UserDefaults.standard.removeObject(forKey: userDefaultsUUIDKey)
+        targetPeripheralUUID = nil
         print("Last connected device successfully removed")
     }
     

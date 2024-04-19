@@ -12,54 +12,72 @@ struct TrackingView: View {
     @State private var isTracking = false
     @State private var isConnecting = true
     @State private var isConnected = false
+    @State private var askForScanning = false
+    @State private var showForgetAlert = false
     let deviceUUID: String
 
     var body: some View {
-        VStack {
-            if isConnecting {
-                ProgressView("Connecting to \(deviceUUID)")
-                    .padding()
-            } else {
-                if isConnected {
-                    Text("Connected to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
+        NavigationStack {
+            VStack {
+                if askForScanning {
+                    ScanningView(bluetoothManager: bluetoothManager)
+                } else if isConnecting {
+                    ProgressView("Connecting to \(deviceUUID)")
                         .padding()
-                    
-                    if !isTracking {
-                        ButtonView(action: {
-                            startTracking()
-                        }, text: "Start tracking", background: .green)
+                } else {
+                    if isConnected {
+                        Text("Connected to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
+                            .padding()
                         
-                        ButtonView(action: {
-                            bluetoothManager.removeLastConnectedUUID()
-                        }, text: "Forget device")
-                        
-                    } else {
-                        ScrollView {
-                            VStack {
-                                ForEach(bluetoothManager.receivedData, id: \.self) { data in
-                                    Text(data)
+                        if !isTracking {
+                            ButtonView(action: {
+                                startTracking()
+                            }, text: "Start tracking", background: .green)
+                            
+                            Button(action: {
+                                showForgetAlert = true
+                            }) {
+                                Text("Forget device")
+                            }
+                            .alert(isPresented: $showForgetAlert) {
+                                Alert(
+                                    title: Text("Are you sure?"),
+                                    message: Text("This action will forget the device."),
+                                    primaryButton: .destructive(Text("Forget")) {
+                                        forgetAndScan()
+                                    },
+                                    secondaryButton: .cancel()
+                                )
+                            }
+                            
+                        } else {
+                            ScrollView {
+                                VStack {
+                                    ForEach(bluetoothManager.receivedData, id: \.self) { data in
+                                        Text(data)
+                                    }
                                 }
                             }
+                            ButtonView(action: {
+                                stopTracking()
+                            }, text: "Stop tracking", background: .red)
                         }
+                    } else {
+                        Text("Couldn't connect to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
+                            .padding()
+                        
                         ButtonView(action: {
-                            stopTracking()
-                        }, text: "Stop tracking", background: .red)
+                            bluetoothManager.forgetLastConnectedUUID()
+                        }, text: "Try again")
+                        
+                        ButtonView(action: {
+                            bluetoothManager.forgetLastConnectedUUID()
+                        }, text: "Try another device")
                     }
-                } else {
-                    Text("Couldn't connect to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
-                        .padding()
-                    
-                    ButtonView(action: {
-                        bluetoothManager.removeLastConnectedUUID()
-                    }, text: "Try again")
-                    
-                    ButtonView(action: {
-                        bluetoothManager.removeLastConnectedUUID()
-                    }, text: "Try another device")
                 }
+            }.onAppear {
+                tryConnecting()
             }
-        }.onAppear {
-            tryConnecting()
         }
     }
     
@@ -83,5 +101,10 @@ struct TrackingView: View {
     func stopTracking() {
         isTracking = false
         bluetoothManager.isTracking = false
+    }
+    
+    func forgetAndScan() {
+        bluetoothManager.forgetLastConnectedUUID()
+        askForScanning = true
     }
 }
