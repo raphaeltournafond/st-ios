@@ -67,19 +67,19 @@ struct TrackingView: View {
                             .padding()
                         
                         ButtonView(action: {
-                            bluetoothManager.forgetLastConnectedUUID()
+                            tryConnecting()
                         }, text: "Try again")
                         
                         Button(action: {
                             showForgetAlert = true
                         }) {
-                            Text("Try another device")
+                            Text("Select another device")
                         }
                         .alert(isPresented: $showForgetAlert) {
                             Alert(
-                                title: Text("Are you sure?"),
-                                message: Text("This action will forget the device."),
-                                primaryButton: .destructive(Text("Forget")) {
+                                title: Text("Confirm?"),
+                                message: Text("You will be redirected to the scanning screen"),
+                                primaryButton: .default(Text("OK")) {
                                     forgetAndScan()
                                 },
                                 secondaryButton: .cancel()
@@ -94,6 +94,8 @@ struct TrackingView: View {
     }
     
     func tryConnecting() {
+        isConnecting = true
+        isConnected = false
         bluetoothManager.connect(withUUID: deviceUUID) { success in
             if success {
                 isConnecting = false
