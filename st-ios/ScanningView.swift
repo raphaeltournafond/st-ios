@@ -19,9 +19,8 @@ struct ScanningView: View {
         } else {
             VStack {
                 Text("Smart Tracker")
-                                .font(.title)
-                                .fontWeight(.bold)
-                                .padding()
+                    .font(.largeTitle)
+                    .padding(.bottom, 30)
                 
                 ButtonView(action: {
                     toggleScan()
@@ -79,5 +78,11 @@ struct ScanningView: View {
                 self.stopScanning()
             }
         }
+    }
+}
+
+struct ScanningView_Previews: PreviewProvider {
+    static var previews: some View {
+        ScanningView(bluetoothManager: BluetoothManager())
     }
 }
