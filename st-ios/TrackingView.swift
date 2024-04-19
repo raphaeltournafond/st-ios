@@ -70,9 +70,21 @@ struct TrackingView: View {
                             bluetoothManager.forgetLastConnectedUUID()
                         }, text: "Try again")
                         
-                        ButtonView(action: {
-                            bluetoothManager.forgetLastConnectedUUID()
-                        }, text: "Try another device")
+                        Button(action: {
+                            showForgetAlert = true
+                        }) {
+                            Text("Try another device")
+                        }
+                        .alert(isPresented: $showForgetAlert) {
+                            Alert(
+                                title: Text("Are you sure?"),
+                                message: Text("This action will forget the device."),
+                                primaryButton: .destructive(Text("Forget")) {
+                                    forgetAndScan()
+                                },
+                                secondaryButton: .cancel()
+                            )
+                        }
                     }
                 }
             }.onAppear {
