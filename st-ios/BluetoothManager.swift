@@ -4,7 +4,7 @@
 //
 //  Created by Raphaël Tournafond on 18/04/2024.
 //
-
+import Foundation
 import CoreBluetooth
 
 // BluetoothManager class responsible for managing Bluetooth functionality.
