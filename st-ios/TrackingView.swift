@@ -36,16 +36,10 @@ struct TrackingView: View {
                         }
                         .padding()
                         
-                        Button(action: {
+                        ButtonView(action: {
                             bluetoothManager.removeLastConnectedUUID()
-                        }) {
-                            Text("Forget device")
-                                .padding()
-                                .background(Color.blue)
-                                .foregroundColor(Color.white)
-                                .cornerRadius(10)
-                        }
-                        .padding()
+                        }, text: "Forget device")
+                        
                     } else {
                         ScrollView {
                             VStack {
@@ -54,41 +48,21 @@ struct TrackingView: View {
                                 }
                             }
                         }
-                        Button(action: {
+                        ButtonView(action: {
                             stopTracking()
-                        }) {
-                            Text("Stop Tracking")
-                                .padding()
-                                .background(Color.red)
-                                .foregroundColor(Color.white)
-                                .cornerRadius(10)
-                        }
+                        }, text: "Stop tracking")
                     }
                 } else {
                     Text("Couldn't connect to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
                         .padding()
                     
-                    Button(action: {
-                        tryConnecting()
-                    }) {
-                        Text("Try Again")
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(Color.white)
-                            .cornerRadius(10)
-                    }
-                    .padding()
-                    
-                    Button(action: {
+                    ButtonView(action: {
                         bluetoothManager.removeLastConnectedUUID()
-                    }) {
-                        Text("Forget device")
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(Color.white)
-                            .cornerRadius(10)
-                    }
-                    .padding()
+                    }, text: "Try again")
+                    
+                    ButtonView(action: {
+                        bluetoothManager.removeLastConnectedUUID()
+                    }, text: "Forget device")
                 }
             }
         }.onAppear {
