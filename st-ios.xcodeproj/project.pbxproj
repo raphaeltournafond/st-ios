@@ -18,6 +18,8 @@
 		AEE2330E2BD1484F00A1C071 /* ScanningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE2330D2BD1484F00A1C071 /* ScanningView.swift */; };
 		AEE233102BD148C900A1C071 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE2330F2BD148C900A1C071 /* BluetoothManager.swift */; };
 		AEE233122BD242F600A1C071 /* ButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE233112BD242F600A1C071 /* ButtonView.swift */; };
+		AEE233162BD2742500A1C071 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE233152BD2742500A1C071 /* LoginView.swift */; };
+		AEE233182BD2743500A1C071 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE233172BD2743500A1C071 /* RegisterView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +54,8 @@
 		AEE2330D2BD1484F00A1C071 /* ScanningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanningView.swift; sourceTree = "<group>"; };
 		AEE2330F2BD148C900A1C071 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
 		AEE233112BD242F600A1C071 /* ButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonView.swift; sourceTree = "<group>"; };
+		AEE233152BD2742500A1C071 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		AEE233172BD2743500A1C071 /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +114,8 @@
 				AEE2330D2BD1484F00A1C071 /* ScanningView.swift */,
 				AEE2330F2BD148C900A1C071 /* BluetoothManager.swift */,
 				AEE233112BD242F600A1C071 /* ButtonView.swift */,
+				AEE233152BD2742500A1C071 /* LoginView.swift */,
+				AEE233172BD2743500A1C071 /* RegisterView.swift */,
 			);
 			path = "st-ios";
 			sourceTree = "<group>";
@@ -270,9 +276,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				AEE232E42BCFB6BC00A1C071 /* ContentView.swift in Sources */,
+				AEE233162BD2742500A1C071 /* LoginView.swift in Sources */,
 				AEE2330E2BD1484F00A1C071 /* ScanningView.swift in Sources */,
 				AEE233122BD242F600A1C071 /* ButtonView.swift in Sources */,
 				AEE2330C2BD13B7300A1C071 /* TrackingView.swift in Sources */,
+				AEE233182BD2743500A1C071 /* RegisterView.swift in Sources */,
 				AEE232E22BCFB6BC00A1C071 /* st_iosApp.swift in Sources */,
 				AEE233102BD148C900A1C071 /* BluetoothManager.swift in Sources */,
 			);
