@@ -23,10 +23,11 @@ struct ButtonView: View {
     var body: some View {
         Button(action: action) {
             Text(text)
-                .padding()
-                .background(background)
                 .foregroundColor(textColor)
-                .cornerRadius(10)
+                .padding()
+                .frame(width: 200, height: 50)
+                .background(background)
+                .cornerRadius(5.0)
         }
         .padding()
     }

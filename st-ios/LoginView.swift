@@ -10,41 +10,44 @@ import SwiftUI
 struct LoginView: View {
     @State private var username: String = ""
     @State private var password: String = ""
+    @State private var openRegister = false
     
     var body: some View {
-        VStack {
-            Spacer()
-            Text("Smart Tracker")
-                .font(.largeTitle)
-                .padding(.bottom, 30)
-            Spacer()
-            
-            TextField("Username", text: $username)
-                .padding()
-                .background(Color(UIColor.systemGray6))
-                .cornerRadius(5.0)
-                .padding(.bottom, 20)
-            
-            SecureField("Password", text: $password)
-                .padding()
-                .background(Color(UIColor.systemGray6))
-                .cornerRadius(5.0)
-                .padding(.bottom, 20)
-            
-            Button(action: {
-                // Perform login action here
-                print("Username: \(self.username), Password: \(self.password)")
-            }) {
-                Text("Login")
-                    .foregroundColor(.white)
+        if openRegister {
+            RegisterView()
+        } else {
+            VStack {
+                Spacer()
+                Text("Smart Tracker")
+                    .font(.largeTitle)
+                    .padding(.bottom, 30)
+                Spacer()
+                
+                TextField("Username", text: $username)
                     .padding()
-                    .frame(width: 200, height: 50)
-                    .background(Color.blue)
+                    .background(Color(UIColor.systemGray6))
                     .cornerRadius(5.0)
+                    .padding(.bottom, 20)
+                
+                SecureField("Password", text: $password)
+                    .padding()
+                    .background(Color(UIColor.systemGray6))
+                    .cornerRadius(5.0)
+                    .padding(.bottom, 20)
+                
+                ButtonView(action: {
+                    print("Username: \(self.username), Password: \(self.password)")
+                }, text: "Login")
+                
+                Button(action: {
+                    openRegister = true
+                }) {
+                    Text("No account? Register now")
+                }
+                Spacer()
             }
-            Spacer()
+            .padding()
         }
-        .padding()
     }
 }
 

@@ -12,16 +12,7 @@ struct ContentView: View {
     @State private var lastUUID: String? = nil
 
     var body: some View {
-        NavigationStack {
-            if lastUUID != nil {
-                TrackingView(bluetoothManager: bluetoothManager, deviceUUID: lastUUID!)
-            } else {
-                ScanningView(bluetoothManager: bluetoothManager)
-            }
-        }
-        .onAppear {
-            lastUUID = bluetoothManager.getLastConnectedUUID()
-        }
+        RegisterView()
     }
 }
 
