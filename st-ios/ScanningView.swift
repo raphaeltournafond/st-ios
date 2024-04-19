@@ -18,17 +18,14 @@ struct ScanningView: View {
                             .font(.title)
                             .fontWeight(.bold)
                             .padding()
-            Button(action: {
-                self.toggleScan()
-            }) {
-                Text(isScanning ? "Stop Scanning" : "Start Scanning")
-                    .padding()
-                    .background(bluetoothManager.bluetoothState == .poweredOn ? Color.blue : Color.gray)
-                    .foregroundColor(bluetoothManager.bluetoothState == .poweredOn ? Color.white : Color.black)
-                    .cornerRadius(10)
-            }
-            .padding()
-            .disabled(bluetoothManager.bluetoothState != .poweredOn)
+            
+            ButtonView(action: {
+                toggleScan()
+            },
+            text: isScanning ? "Stop Scanning" : "Start Scanning",
+            textColor: bluetoothManager.bluetoothState == .poweredOn ? Color.white : Color.black,
+            background: bluetoothManager.bluetoothState == .poweredOn ? Color.blue : Color.gray
+            ).disabled(bluetoothManager.bluetoothState != .poweredOn)
             
             if bluetoothManager.bluetoothState != .poweredOn {
                 Text(bluetoothManager.stateMessage)
@@ -45,7 +42,7 @@ struct ScanningView: View {
                 Button(action: {
                     bluetoothManager.connect(to: peripheral)
                 }) {
-                    Text(peripheral.identifier.uuidString + " - " + (peripheral.name ?? "Unknown name"))
+                    Text(peripheral.identifier.uuidString + " - " + (peripheral.name ?? "Unknown name")).foregroundStyle(Color.black)
                 }
             }
         }

@@ -27,7 +27,7 @@ struct TrackingView: View {
                     if !isTracking {
                         ButtonView(action: {
                             startTracking()
-                        }, text: "Start tracking")
+                        }, text: "Start tracking", background: .green)
                         
                         ButtonView(action: {
                             bluetoothManager.removeLastConnectedUUID()
@@ -55,7 +55,7 @@ struct TrackingView: View {
                     
                     ButtonView(action: {
                         bluetoothManager.removeLastConnectedUUID()
-                    }, text: "Forget device")
+                    }, text: "Try another device")
                 }
             }
         }.onAppear {
