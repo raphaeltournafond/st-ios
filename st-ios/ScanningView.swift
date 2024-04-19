@@ -11,44 +11,49 @@ struct ScanningView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
     @State private var isScanning = false
     @State private var timer: Timer?
+    @State private var selectedDeviceUUID: String? = nil
 
     var body: some View {
-        VStack {
-            Text("Smart Tracker")
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .padding()
-            
-            ButtonView(action: {
-                toggleScan()
-            },
-            text: isScanning ? "Stop Scanning" : "Start Scanning",
-            textColor: bluetoothManager.bluetoothState == .poweredOn ? Color.white : Color.black,
-            background: bluetoothManager.bluetoothState == .poweredOn ? Color.blue : Color.gray
-            ).disabled(bluetoothManager.bluetoothState != .poweredOn)
-            
-            if bluetoothManager.bluetoothState != .poweredOn {
-                Text(bluetoothManager.stateMessage)
-                    .italic()
-                    .foregroundStyle(Color.gray)
-            }
+        if let device = selectedDeviceUUID {
+            TrackingView(bluetoothManager: bluetoothManager, deviceUUID: device)
+        } else {
+            VStack {
+                Text("Smart Tracker")
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .padding()
+                
+                ButtonView(action: {
+                    toggleScan()
+                },
+                text: isScanning ? "Stop Scanning" : "Start Scanning",
+                textColor: bluetoothManager.bluetoothState == .poweredOn ? Color.white : Color.black,
+                background: bluetoothManager.bluetoothState == .poweredOn ? Color.blue : Color.gray
+                ).disabled(bluetoothManager.bluetoothState != .poweredOn)
+                
+                if bluetoothManager.bluetoothState != .poweredOn {
+                    Text(bluetoothManager.stateMessage)
+                        .italic()
+                        .foregroundStyle(Color.gray)
+                }
 
-            if isScanning {
-                ProgressView("Scanning...")
-                    .padding()
-            }
+                if isScanning {
+                    ProgressView("Scanning...")
+                        .padding()
+                }
 
-            List(bluetoothManager.peripherals, id: \.self) { peripheral in
-                Button(action: {
-                    bluetoothManager.connect(to: peripheral)
-                }) {
-                    Text(peripheral.identifier.uuidString + " - " + (peripheral.name ?? "Unknown name")).foregroundStyle(Color.black)
+                List(bluetoothManager.peripherals, id: \.self) { peripheral in
+                    Button(action: {
+                        selectedDeviceUUID = peripheral.identifier.uuidString
+                    }) {
+                        Text(peripheral.identifier.uuidString + " - " + (peripheral.name ?? "Unknown name")).foregroundStyle(Color.black)
+                    }
                 }
             }
-        }
-        .onDisappear {
-            self.timer?.invalidate()
-            self.timer = nil
+            .onDisappear {
+                self.timer?.invalidate()
+                self.timer = nil
+            }
         }
     }
 
@@ -75,5 +80,4 @@ struct ScanningView: View {
             }
         }
     }
-
 }
