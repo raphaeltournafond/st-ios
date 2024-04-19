@@ -17,79 +17,77 @@ struct TrackingView: View {
     let deviceUUID: String
 
     var body: some View {
-        NavigationStack {
-            VStack {
-                if askForScanning {
-                    ScanningView(bluetoothManager: bluetoothManager)
-                } else if isConnecting {
-                    ProgressView("Connecting to \(deviceUUID)")
+        VStack {
+            if askForScanning {
+                ScanningView(bluetoothManager: bluetoothManager)
+            } else if isConnecting {
+                ProgressView("Connecting to \(deviceUUID)")
+                    .padding()
+            } else {
+                if isConnected {
+                    Text("Connected to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
                         .padding()
-                } else {
-                    if isConnected {
-                        Text("Connected to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
-                            .padding()
-                        
-                        if !isTracking {
-                            ButtonView(action: {
-                                startTracking()
-                            }, text: "Start tracking", background: .green)
-                            
-                            Button(action: {
-                                showForgetAlert = true
-                            }) {
-                                Text("Forget device")
-                            }
-                            .alert(isPresented: $showForgetAlert) {
-                                Alert(
-                                    title: Text("Are you sure?"),
-                                    message: Text("This action will forget the device."),
-                                    primaryButton: .destructive(Text("Forget")) {
-                                        forgetAndScan()
-                                    },
-                                    secondaryButton: .cancel()
-                                )
-                            }
-                            
-                        } else {
-                            ScrollView {
-                                VStack {
-                                    ForEach(bluetoothManager.receivedData, id: \.self) { data in
-                                        Text(data)
-                                    }
-                                }
-                            }
-                            ButtonView(action: {
-                                stopTracking()
-                            }, text: "Stop tracking", background: .red)
-                        }
-                    } else {
-                        Text("Couldn't connect to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
-                            .padding()
-                        
+                    
+                    if !isTracking {
                         ButtonView(action: {
-                            tryConnecting()
-                        }, text: "Try again")
+                            startTracking()
+                        }, text: "Start tracking", background: .green)
                         
                         Button(action: {
                             showForgetAlert = true
                         }) {
-                            Text("Select another device")
+                            Text("Forget device")
                         }
                         .alert(isPresented: $showForgetAlert) {
                             Alert(
-                                title: Text("Confirm?"),
-                                message: Text("You will be redirected to the scanning screen"),
-                                primaryButton: .default(Text("OK")) {
+                                title: Text("Are you sure?"),
+                                message: Text("This action will forget the device."),
+                                primaryButton: .destructive(Text("Forget")) {
                                     forgetAndScan()
                                 },
                                 secondaryButton: .cancel()
                             )
                         }
+                        
+                    } else {
+                        ScrollView {
+                            VStack {
+                                ForEach(bluetoothManager.receivedData, id: \.self) { data in
+                                    Text(data)
+                                }
+                            }
+                        }
+                        ButtonView(action: {
+                            stopTracking()
+                        }, text: "Stop tracking", background: .red)
+                    }
+                } else {
+                    Text("Couldn't connect to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
+                        .padding()
+                    
+                    ButtonView(action: {
+                        tryConnecting()
+                    }, text: "Try again")
+                    
+                    Button(action: {
+                        showForgetAlert = true
+                    }) {
+                        Text("Select another device")
+                    }
+                    .alert(isPresented: $showForgetAlert) {
+                        Alert(
+                            title: Text("Confirm?"),
+                            message: Text("You will be redirected to the scanning screen"),
+                            primaryButton: .default(Text("OK")) {
+                                forgetAndScan()
+                            },
+                            secondaryButton: .cancel()
+                        )
                     }
                 }
-            }.onAppear {
-                tryConnecting()
             }
+        }.onAppear {
+            tryConnecting()
         }
     }
     
