@@ -25,16 +25,9 @@ struct TrackingView: View {
                         .padding()
                     
                     if !isTracking {
-                        Button(action: {
+                        ButtonView(action: {
                             startTracking()
-                        }) {
-                            Text("Start Tracking")
-                                .padding()
-                                .background(Color.green)
-                                .foregroundColor(Color.white)
-                                .cornerRadius(10)
-                        }
-                        .padding()
+                        }, text: "Start tracking")
                         
                         ButtonView(action: {
                             bluetoothManager.removeLastConnectedUUID()
@@ -50,7 +43,7 @@ struct TrackingView: View {
                         }
                         ButtonView(action: {
                             stopTracking()
-                        }, text: "Stop tracking")
+                        }, text: "Stop tracking", background: .red)
                     }
                 } else {
                     Text("Couldn't connect to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
