@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AEA40D752BD403E3001158A3 /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA40D742BD403E3001158A3 /* ChartView.swift */; };
 		AEE232E22BCFB6BC00A1C071 /* st_iosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE232E12BCFB6BC00A1C071 /* st_iosApp.swift */; };
 		AEE232E42BCFB6BC00A1C071 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE232E32BCFB6BC00A1C071 /* ContentView.swift */; };
 		AEE232E62BCFB6BE00A1C071 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AEE232E52BCFB6BE00A1C071 /* Assets.xcassets */; };
@@ -41,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AEA40D742BD403E3001158A3 /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 		AEE232DE2BCFB6BC00A1C071 /* st-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "st-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AEE232E12BCFB6BC00A1C071 /* st_iosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = st_iosApp.swift; sourceTree = "<group>"; };
 		AEE232E32BCFB6BC00A1C071 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				AEE233152BD2742500A1C071 /* LoginView.swift */,
 				AEE233172BD2743500A1C071 /* RegisterView.swift */,
 				AEE233192BD27E0200A1C071 /* AccountManager.swift */,
+				AEA40D742BD403E3001158A3 /* ChartView.swift */,
 			);
 			path = "st-ios";
 			sourceTree = "<group>";
@@ -281,6 +284,7 @@
 				AEE232E42BCFB6BC00A1C071 /* ContentView.swift in Sources */,
 				AEE233162BD2742500A1C071 /* LoginView.swift in Sources */,
 				AEE2330E2BD1484F00A1C071 /* ScanningView.swift in Sources */,
+				AEA40D752BD403E3001158A3 /* ChartView.swift in Sources */,
 				AEE233122BD242F600A1C071 /* ButtonView.swift in Sources */,
 				AEE2330C2BD13B7300A1C071 /* TrackingView.swift in Sources */,
 				AEE2331A2BD27E0200A1C071 /* AccountManager.swift in Sources */,

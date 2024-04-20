@@ -28,7 +28,7 @@ struct TrackingView: View {
                 if !connectionError {
                     
                     if !isTracking {
-                        Text("\(bluetoothManager.targetPeripheral?.name ?? deviceName) selected for tracking")
+                        Text("\(deviceName) selected for tracking")
                             .padding()
                         
                         ButtonView(action: {
