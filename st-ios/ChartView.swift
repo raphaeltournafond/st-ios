@@ -8,7 +8,8 @@
 import SwiftUI
 import Charts
 
-struct AccelerometerData {
+struct AccelerometerData: Identifiable {
+    let timestamp = Date()
     let x: Double
     let y: Double
     let z: Double
@@ -17,17 +18,22 @@ struct AccelerometerData {
 
 class ChartViewModel: ObservableObject {
     @Published var data: [AccelerometerData] = []
+    let maxDataHistory = 20
+    let movingAverage = 5
     
     func generateRandomData() {
-        let randomX = Double.random(in: -1.0...1.0)
-        let randomY = Double.random(in: -1.0...1.0)
-        let randomZ = Double.random(in: -1.0...1.0)
+        let randomX = Double.random(in: -10.0...10.0)
+        let randomY = Double.random(in: -10.0...10.0)
+        let randomZ = Double.random(in: -10.0...10.0)
         let newData = AccelerometerData(x: randomX, y: randomY, z: randomZ)
         appendData(dataPoint: newData)
     }
     
     func appendData(dataPoint: AccelerometerData) {
-        data.append(dataPoint)
+        withAnimation(.easeOut(duration: 0.1)) {data.append(dataPoint)}
+        if (data.count > maxDataHistory) {
+            data.removeFirst()
+        }
     }
     
     func clearData() {
@@ -45,13 +51,14 @@ struct ChartView: View {
     
     var body: some View {
         VStack {
-            Chart(Array(chartViewModel.data.suffix(10).enumerated()), id: \.0) { index, dataPoint in
+            Chart(chartViewModel.data.suffix(chartViewModel.maxDataHistory)) {
                 LineMark (
-                    x: .value("Index", String(index)),
-                    y: .value("X", dataPoint.x)
+                    x: .value("Index", $0.timestamp),
+                    y: .value("X", $0.x)
                 )
                 .interpolationMethod(.catmullRom)
             }
+            .chartYScale(domain: -20.0...20.0)
             .padding()
         }
     }
