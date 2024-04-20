@@ -62,6 +62,9 @@ struct TrackingView: View {
                                 }
                             }
                         }
+                        
+                        Text(bluetoothManager.lastData ?? "")
+                        
                         ButtonView(action: {
                             stopTracking()
                         }, text: "Stop tracking", background: .red)

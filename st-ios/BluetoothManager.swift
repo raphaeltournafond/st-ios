@@ -13,6 +13,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     @Published var peripherals: [CBPeripheral] = []
     @Published var stateMessage: String = ""
     @Published var receivedData: [String] = []
+    @Published var lastData: String? = nil
     @Published var bluetoothState: CBManagerState = .unknown // Track Bluetooth state
     @Published var connectedPeripheral: CBPeripheral?
     @Published var targetPeripheral: CBPeripheral?
@@ -196,6 +197,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
             if let data = characteristic.value {
                 let valueString = String(data: data, encoding: .utf8) ?? "Unable to convert data to String"
                 print("Received data: \(valueString)")
+                self.lastData = valueString
                 self.receivedData.append(valueString)
             }
         }
