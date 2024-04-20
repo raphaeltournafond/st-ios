@@ -21,6 +21,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     private var targetPeripheralUUID: String?
     private var onBluetoothStateUpdate: ((CBManagerState) -> Void)?
     private let userDefaultsUUIDKey = "lastConnectedDeviceUUID"
+    private let userDefaultsNameKey = "lastConnectedDeviceName"
     private let powerOnTimeoutInterval: Double = 3.0
     private let connectionTimeoutInterval: Double = 10.0
 
@@ -144,6 +145,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         print("Connected to peripheral: \(peripheral)")
         connectedPeripheral = peripheral
         UserDefaults.standard.set(peripheral.identifier.uuidString, forKey: userDefaultsUUIDKey)
+        UserDefaults.standard.set(peripheral.name ?? "Device", forKey: userDefaultsNameKey)
         connectedPeripheral?.delegate = self
         connectedPeripheral?.discoverServices(nil)
     }
@@ -152,6 +154,12 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
         let lastUUID = UserDefaults.standard.string(forKey: userDefaultsUUIDKey)
         print("Last connected device: \(lastUUID ?? "None")")
         return lastUUID
+    }
+    
+    func getLastConnectedName() -> String? {
+        let lastName = UserDefaults.standard.string(forKey: userDefaultsNameKey)
+        print("Last connected device: \(lastName ?? "None")")
+        return lastName
     }
     
     func forgetLastConnectedUUID() {

@@ -12,10 +12,11 @@ struct ScanningView: View {
     @State private var isScanning = false
     @State private var timer: Timer?
     @State private var selectedDeviceUUID: String? = nil
+    @State private var selectedDeviceName: String? = nil
 
     var body: some View {
-        if let device = selectedDeviceUUID {
-            TrackingView(bluetoothManager: bluetoothManager, deviceUUID: device)
+        if let deviceUUID = selectedDeviceUUID, let deviceName = selectedDeviceName {
+            TrackingView(bluetoothManager: bluetoothManager, deviceUUID: deviceUUID, deviceName: deviceName)
         } else {
             VStack {
                 Text("Smart Tracker")
@@ -44,8 +45,9 @@ struct ScanningView: View {
                 List(bluetoothManager.peripherals, id: \.self) { peripheral in
                     Button(action: {
                         selectedDeviceUUID = peripheral.identifier.uuidString
+                        selectedDeviceName = peripheral.name ?? "Device"
                     }) {
-                        Text(peripheral.identifier.uuidString + " - " + (peripheral.name ?? "Unknown name")).foregroundStyle(Color.black)
+                        Text(peripheral.identifier.uuidString + " - " + (peripheral.name ?? "Unnamed device")).foregroundStyle(Color.black)
                     }
                 }
             }

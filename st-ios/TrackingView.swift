@@ -15,19 +15,20 @@ struct TrackingView: View {
     @State private var askForScanning = false
     @State private var showForgetAlert = false
     let deviceUUID: String
+    let deviceName: String
 
     var body: some View {
         VStack {
             if askForScanning {
                 ScanningView(bluetoothManager: bluetoothManager)
             } else if isConnecting {
-                ProgressView("Connecting to \(deviceUUID)")
+                ProgressView("Connecting to \(deviceName == "Unknown" ? deviceUUID : deviceName)")
                     .padding()
             } else {
                 if !connectionError {
                     
                     if !isTracking {
-                        Text("\(bluetoothManager.targetPeripheral?.name ?? "Device") selected for tracking")
+                        Text("\(bluetoothManager.targetPeripheral?.name ?? deviceName) selected for tracking")
                             .padding()
                         
                         ButtonView(action: {
