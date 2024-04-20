@@ -7,9 +7,17 @@
 
 import Foundation
 
+struct User {
+    let id: Int
+    let firstName: String
+    let lastName: String
+    let username: String
+    let email: String
+}
+
 class AccountManager {
     // Base URL of your Django backend
-    let baseURL = "https://your-django-backend-url.com/api/"
+    let baseURL = "http://localhost/api/"
     
     // Access and refresh tokens
     private var accessToken: String?
@@ -117,4 +125,5 @@ class AccountManager {
         }.resume()
     }
 }
+
 
