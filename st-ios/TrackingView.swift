@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TrackingView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
+    @StateObject var chartViewModel = ChartViewModel()
     @State private var isTracking = false
     @State private var isConnecting = false
     @State private var connectionError = false
@@ -55,13 +56,9 @@ struct TrackingView: View {
                         Text("Connected to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
                             .padding()
                         
-                        ScrollView {
-                            VStack {
-                                ForEach(bluetoothManager.receivedData, id: \.self) { data in
-                                    Text(data)
-                                }
-                            }
-                        }
+                        ChartView()
+                            .environmentObject(chartViewModel)
+                            .padding()
                         
                         Text(bluetoothManager.lastData ?? "")
                         
@@ -95,6 +92,11 @@ struct TrackingView: View {
                 }
             }
         }
+        .onReceive(bluetoothManager.$lastData) { newData in
+            if let newData = newData {
+                appendData(data: newData)
+            }
+        }
     }
     
     func tryConnecting() {
@@ -125,5 +127,16 @@ struct TrackingView: View {
     func forgetAndScan() {
         bluetoothManager.forgetLastConnectedUUID()
         askForScanning = true
+    }
+    
+    func appendData(data: String) {
+        let components = data.components(separatedBy: ",")
+        if components.count == 3,
+           let x = Double(components[0]),
+           let y = Double(components[1]),
+           let z = Double(components[2]) {
+            let accelerometerData = AccelerometerData(x: x, y: y, z: z)
+            chartViewModel.appendData(dataPoint: accelerometerData)
+        }
     }
 }

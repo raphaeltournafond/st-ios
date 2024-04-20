@@ -26,7 +26,7 @@ class ChartViewModel: ObservableObject {
         appendData(dataPoint: newData)
     }
     
-    private func appendData(dataPoint: AccelerometerData) {
+    func appendData(dataPoint: AccelerometerData) {
         data.append(dataPoint)
     }
     
