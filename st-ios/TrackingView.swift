@@ -10,8 +10,8 @@ import SwiftUI
 struct TrackingView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
     @State private var isTracking = false
-    @State private var isConnecting = true
-    @State private var isConnected = false
+    @State private var isConnecting = false
+    @State private var connectionError = false
     @State private var askForScanning = false
     @State private var showForgetAlert = false
     let deviceUUID: String
@@ -24,11 +24,12 @@ struct TrackingView: View {
                 ProgressView("Connecting to \(deviceUUID)")
                     .padding()
             } else {
-                if isConnected {
-                    Text("Connected to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
-                        .padding()
+                if !connectionError {
                     
                     if !isTracking {
+                        Text("\(bluetoothManager.targetPeripheral?.name ?? "Device") selected for tracking")
+                            .padding()
+                        
                         ButtonView(action: {
                             startTracking()
                         }, text: "Start tracking", background: .green)
@@ -50,6 +51,9 @@ struct TrackingView: View {
                         }
                         
                     } else {
+                        Text("Connected to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
+                            .padding()
+                        
                         ScrollView {
                             VStack {
                                 ForEach(bluetoothManager.receivedData, id: \.self) { data in
@@ -62,7 +66,7 @@ struct TrackingView: View {
                         }, text: "Stop tracking", background: .red)
                     }
                 } else {
-                    Text("Couldn't connect to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
+                    Text("Couldn't connect to \(bluetoothManager.targetPeripheral?.name ?? "device")")
                         .padding()
                     
                     ButtonView(action: {
@@ -86,31 +90,30 @@ struct TrackingView: View {
                     }
                 }
             }
-        }.onAppear {
-            tryConnecting()
         }
     }
     
     func tryConnecting() {
         isConnecting = true
-        isConnected = false
+        connectionError = false
         bluetoothManager.connect(withUUID: deviceUUID) { success in
             if success {
                 isConnecting = false
-                isConnected = true
             } else {
                 isConnecting = false
-                isConnected = false
+                connectionError = true
             }
         }
     }
 
     func startTracking() {
+        tryConnecting()
         isTracking = true
         bluetoothManager.isTracking = true
     }
     
     func stopTracking() {
+        bluetoothManager.disconnectFromPeripheral()
         isTracking = false
         bluetoothManager.isTracking = false
     }

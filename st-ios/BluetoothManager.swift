@@ -15,10 +15,10 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     @Published var receivedData: [String] = []
     @Published var bluetoothState: CBManagerState = .unknown // Track Bluetooth state
     @Published var connectedPeripheral: CBPeripheral?
+    @Published var targetPeripheral: CBPeripheral?
     @Published var isTracking: Bool = false
     private var centralManager: CBCentralManager!
     private var targetPeripheralUUID: String?
-    private var targetPeripheral: CBPeripheral?
     private var onBluetoothStateUpdate: ((CBManagerState) -> Void)?
     private let userDefaultsUUIDKey = "lastConnectedDeviceUUID"
     private let powerOnTimeoutInterval: Double = 3.0
@@ -134,6 +134,7 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     func disconnectFromPeripheral() {
         if let peripheral = connectedPeripheral {
             centralManager.cancelPeripheralConnection(peripheral)
+            print("Disconnected from : \(peripheral.name ?? "Unknown")")
         }
         connectedPeripheral = nil
     }
