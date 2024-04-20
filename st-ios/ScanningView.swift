@@ -26,7 +26,7 @@ struct ScanningView: View {
                 ButtonView(action: {
                     toggleScan()
                 },
-                text: isScanning ? "Stop Scanning" : "Start Scanning",
+                text: isScanning ? "Cancel" : "Start Scanning",
                 textColor: bluetoothManager.bluetoothState == .poweredOn ? Color.white : Color.black,
                 background: bluetoothManager.bluetoothState == .poweredOn ? Color.blue : Color.gray
                 ).disabled(bluetoothManager.bluetoothState != .poweredOn)

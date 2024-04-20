@@ -25,9 +25,9 @@ struct ButtonView: View {
             Text(text)
                 .foregroundColor(textColor)
                 .padding()
-                .frame(width: 200, height: 50)
+                .frame(width: 200, height: 75)
                 .background(background)
-                .cornerRadius(5.0)
+                .cornerRadius(20.0)
         }
         .padding()
     }
