@@ -135,8 +135,9 @@ struct TrackingView: View {
            let x = Double(components[0]),
            let y = Double(components[1]),
            let z = Double(components[2]) {
-            let accelerometerData = AccelerometerData(x: x, y: y, z: z)
-            chartViewModel.appendData(dataPoint: accelerometerData)
+            chartViewModel.appendData(dataPoint: AccelerometerData(value: x, axis: "X"))
+            chartViewModel.appendData(dataPoint: AccelerometerData(value: y, axis: "Y"))
+            chartViewModel.appendData(dataPoint: AccelerometerData(value: z, axis: "Z"))
         }
     }
 }

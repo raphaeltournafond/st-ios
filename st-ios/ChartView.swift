@@ -10,29 +10,37 @@ import Charts
 
 struct AccelerometerData: Identifiable {
     let timestamp = Date()
-    let x: Double
-    let y: Double
-    let z: Double
+    let value: Double
+    let axis: String
     let id = UUID()
 }
 
 class ChartViewModel: ObservableObject {
     @Published var data: [AccelerometerData] = []
     let maxDataHistory = 20
-    let movingAverage = 5
+    var buffer: [AccelerometerData] = []
     
     func generateRandomData() {
         let randomX = Double.random(in: -10.0...10.0)
         let randomY = Double.random(in: -10.0...10.0)
         let randomZ = Double.random(in: -10.0...10.0)
-        let newData = AccelerometerData(x: randomX, y: randomY, z: randomZ)
-        appendData(dataPoint: newData)
+        appendData(dataPoint: AccelerometerData(value: randomX, axis: "X"))
+        appendData(dataPoint: AccelerometerData(value: randomY, axis: "Y"))
+        appendData(dataPoint: AccelerometerData(value: randomZ, axis: "Z"))
     }
     
     func appendData(dataPoint: AccelerometerData) {
-        withAnimation(.easeOut(duration: 0.1)) {data.append(dataPoint)}
-        if (data.count > maxDataHistory) {
-            data.removeFirst()
+        DispatchQueue.main.async {
+            withAnimation(.easeOut(duration: 0.1)) {
+                self.buffer.append(dataPoint)
+                if self.buffer.count >= 3 {
+                    self.data.append(contentsOf: self.buffer)
+                    self.buffer.removeAll()
+                }
+                if self.data.count > self.maxDataHistory * 3 {
+                    self.data.removeFirst(3)
+                }
+            }
         }
     }
     
@@ -43,22 +51,20 @@ class ChartViewModel: ObservableObject {
 
 struct ChartView: View {
     @EnvironmentObject var chartViewModel: ChartViewModel
-    let count: Int
-    
-    init(count: Int = 10) {
-        self.count = count
-    }
+    let maxForce = 40
     
     var body: some View {
         VStack {
-            Chart(chartViewModel.data.suffix(chartViewModel.maxDataHistory)) {
+            Chart(chartViewModel.data.suffix(chartViewModel.maxDataHistory * 3)) {
                 LineMark (
                     x: .value("Index", $0.timestamp),
-                    y: .value("X", $0.x)
+                    y: .value("Value", $0.value)
                 )
                 .interpolationMethod(.catmullRom)
+                .foregroundStyle(by: .value("Axis", $0.axis))
             }
-            .chartYScale(domain: -20.0...20.0)
+            .chartYScale(domain: -maxForce...maxForce)
+            .chartXAxis(.hidden)
             .padding()
         }
     }
