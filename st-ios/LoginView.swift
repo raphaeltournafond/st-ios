@@ -11,6 +11,7 @@ struct LoginView: View {
     @State private var username: String = ""
     @State private var password: String = ""
     @State private var openRegister = false
+    private var accountManager = AccountManager()
     
     var body: some View {
         if openRegister {
@@ -36,7 +37,18 @@ struct LoginView: View {
                     .padding(.bottom, 20)
                 
                 ButtonView(action: {
-                    print("Username: \(self.username), Password: \(self.password)")
+                    accountManager.login(username: "root", password: "root") { result in
+                        switch result {
+                        case .success(let isAuthenticated):
+                            if isAuthenticated {
+                                print("Login successful")
+                            } else {
+                                print("Login failed")
+                            }
+                        case .failure(let error):
+                            print("Error during login: \(error)")
+                        }
+                    }
                 }, text: "Login")
                 
                 Button(action: {
