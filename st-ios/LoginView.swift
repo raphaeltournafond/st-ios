@@ -41,6 +41,10 @@ struct LoginView: View {
                     .cornerRadius(15.0)
                     .padding(.bottom, 10)
                 
+                if loginFailed {
+                    Text("Login failed please try again").foregroundStyle(.red)
+                }
+                
                 ButtonView(action: {
                     print("Login IN... username: \(self.username), password: \(self.password)")
                     loginFailed = false
@@ -60,10 +64,6 @@ struct LoginView: View {
                         }
                     }
                 }, text: "Login")
-                
-                if loginFailed {
-                    Text("Login failed please try again").foregroundStyle(.red)
-                }
                 
                 Button(action: {
                     openRegister = true

@@ -11,6 +11,7 @@ struct RegisterView: View {
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var email: String = ""
+    @State private var isValidEmail = true
     @State private var username: String = ""
     @State private var password: String = ""
     @State private var openLogin: Bool = false
@@ -45,6 +46,11 @@ struct RegisterView: View {
                 InputView(name: "Email", field: $email)
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 15.0)
+                            .stroke(isValidEmail ? Color.clear : Color.red, lineWidth: 2)
+                            .padding(.bottom, 10)
+                    )
                 
                 SecureField("Password", text: $password)
                     .padding()
@@ -52,7 +58,12 @@ struct RegisterView: View {
                     .cornerRadius(15.0)
                     .padding(.bottom, 10)
                 
+                if registerFailed {
+                    Text("Register failed please try again").foregroundStyle(.red)
+                }
+                
                 ButtonView(action: {
+                    isValidEmail = isValidEmailFormat(email)
                     print("First Name: \(self.firstName), Last Name: \(self.lastName), Email: \(self.email), Username: \(self.username), Password: \(self.password)")
                     registerFailed = false
                     accountManager.register(firstName: firstName, lastName: lastName, email: email, username: username, password: password) { result in
@@ -82,6 +93,12 @@ struct RegisterView: View {
             }
             .padding()
         }
+    }
+    
+    private func isValidEmailFormat(_ email: String) -> Bool {
+        // Simple email format validation
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: email)
     }
 }
 
