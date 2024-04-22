@@ -27,19 +27,13 @@ struct ScanningView: View {
                     toggleScan()
                 },
                 text: isScanning ? "Cancel" : "Start Scanning",
-                textColor: bluetoothManager.bluetoothState == .poweredOn ? Color.white : Color.black,
-                background: bluetoothManager.bluetoothState == .poweredOn ? Color.blue : Color.gray
+                           textColor: bluetoothManager.bluetoothState == .poweredOn ? Color.white : Color.secondary,
+                           background: bluetoothManager.bluetoothState == .poweredOn ? Color.blue : Color.accentColor
                 ).disabled(bluetoothManager.bluetoothState != .poweredOn)
                 
                 if bluetoothManager.bluetoothState != .poweredOn {
                     Text(bluetoothManager.stateMessage)
-                        .italic()
-                        .foregroundStyle(Color.gray)
-                }
-
-                if isScanning {
-                    ProgressView("Scanning...")
-                        .padding()
+                        .foregroundStyle(.red)
                 }
 
                 List(bluetoothManager.peripherals, id: \.self) { peripheral in
@@ -49,6 +43,11 @@ struct ScanningView: View {
                     }) {
                         Text(peripheral.identifier.uuidString + " - " + (peripheral.name ?? "Unnamed device")).foregroundStyle(Color.black)
                     }
+                }
+                
+                if isScanning {
+                    ProgressView("Scanning...")
+                        .padding()
                 }
             }
             .onDisappear {
