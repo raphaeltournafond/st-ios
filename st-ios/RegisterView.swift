@@ -13,10 +13,15 @@ struct RegisterView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var openLogin: Bool = false
+    private var accountManager: AccountManager
+    
+    init(accountManager: AccountManager) {
+        self.accountManager = accountManager
+    }
     
     var body: some View {
         if openLogin {
-            LoginView()
+            LoginView(accountManager: accountManager)
         } else {
             VStack {
                 Spacer()
@@ -71,6 +76,6 @@ struct RegisterView: View {
 
 struct RegisterView_Previews: PreviewProvider {
     static var previews: some View {
-        RegisterView()
+        RegisterView(accountManager: AccountManager())
     }
 }

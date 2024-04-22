@@ -10,14 +10,18 @@ import SwiftUI
 struct LoginView: View {
     @State private var username: String = ""
     @State private var password: String = ""
-    @State private var openRegister = false
-    @State private var loggedIn = false
-    @State private var loginFailed = false
-    private var accountManager = AccountManager()
+    @State private var openRegister: Bool = false
+    @State private var loggedIn: Bool = false
+    @State private var loginFailed: Bool = false
+    private var accountManager: AccountManager
+    
+    init(accountManager: AccountManager) {
+        self.accountManager = accountManager
+    }
     
     var body: some View {
         if openRegister {
-            RegisterView()
+            RegisterView(accountManager: accountManager)
         } else if loggedIn {
             ContentView()
         } else {
@@ -77,6 +81,6 @@ struct LoginView: View {
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView()
+        LoginView(accountManager: AccountManager())
     }
 }
