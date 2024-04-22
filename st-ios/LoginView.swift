@@ -37,6 +37,7 @@ struct LoginView: View {
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(5.0)
                     .padding(.bottom, 20)
+                    .textInputAutocapitalization(.never)
                 
                 SecureField("Password", text: $password)
                     .padding()
@@ -45,6 +46,7 @@ struct LoginView: View {
                     .padding(.bottom, 20)
                 
                 ButtonView(action: {
+                    print("Login IN... username: \(self.username), password: \(self.password)")
                     loginFailed = false
                     accountManager.login(username: username, password: password) { result in
                         switch result {
