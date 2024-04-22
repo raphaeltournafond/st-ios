@@ -28,8 +28,8 @@ class AccountManager {
     private var currentConnectedUser: User?
 
     // MARK: - Registration
-    func register(username: String, password: String, completion: @escaping (Result<Bool, Error>) -> Void) {
-        let parameters = ["username": username, "password": password]
+    func register(firstName: String, lastName: String, email: String, username: String, password: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        let parameters = ["first_name": firstName,"last_name": lastName, "email": email, "username": username, "password": password]
         sendRequest(endpoint: "accounts/register/", method: "POST", parameters: parameters) { result in
             switch result {
             case .success(_):
