@@ -34,6 +34,7 @@ struct LoginView: View {
                 
                 InputView(name: "Username", field: $username)
                     .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
                 
                 SecureField("Password", text: $password)
                     .padding()

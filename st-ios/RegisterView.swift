@@ -42,6 +42,7 @@ struct RegisterView: View {
                 
                 InputView(name: "Username", field: $username)
                     .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
                 
                 InputView(name: "Email", field: $email)
                     .keyboardType(.emailAddress)
