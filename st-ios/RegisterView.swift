@@ -15,7 +15,6 @@ struct RegisterView: View {
     @State private var username: String = ""
     @State private var password: String = ""
     @State private var openLogin: Bool = false
-    @State private var registeredIn: Bool = false
     @State private var registerFailed: Bool = false
     private var accountManager: AccountManager
     
@@ -72,7 +71,7 @@ struct RegisterView: View {
                         case .success(let isRegistered):
                             if isRegistered {
                                 print("Register successful")
-                                registeredIn = true
+                                openLogin = true
                             } else {
                                 print("Register failed")
                                 registerFailed = true

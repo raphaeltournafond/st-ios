@@ -15,17 +15,13 @@ struct User {
     let email: String
 }
 
-class AccountManager {
+class AccountManager: ObservableObject {
     // Base URL of your Django backend
     let baseURL = "http://192.168.1.60:8000/"
     
     // Access and refresh tokens
     private var accessToken: String?
     private var refreshToken: String?
-    
-    // State variables
-    private var isConnected = false
-    private var currentConnectedUser: User?
 
     // MARK: - Registration
     func register(firstName: String, lastName: String, email: String, username: String, password: String, completion: @escaping (Result<Bool, Error>) -> Void) {

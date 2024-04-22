@@ -9,20 +9,25 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var bluetoothManager = BluetoothManager()
+    @ObservedObject var accountManager = AccountManager()
     @State private var lastUUID: String? = nil
     @State private var lastName: String? = nil
 
     var body: some View {
-        NavigationStack {
-            if let uuid = lastUUID, let name = lastName {
-                TrackingView(bluetoothManager: bluetoothManager, deviceUUID: uuid, deviceName: name)
-            } else {
-                ScanningView(bluetoothManager: bluetoothManager)
+        if true {
+            LoginView(accountManager: accountManager)
+        } else {
+            NavigationStack {
+                if let uuid = lastUUID, let name = lastName {
+                    TrackingView(bluetoothManager: bluetoothManager, deviceUUID: uuid, deviceName: name)
+                } else {
+                    ScanningView(bluetoothManager: bluetoothManager)
+                }
             }
-        }
-        .onAppear {
-            lastUUID = bluetoothManager.getLastConnectedUUID()
-            lastName = bluetoothManager.getLastConnectedName()
+            .onAppear {
+                lastUUID = bluetoothManager.getLastConnectedUUID()
+                lastName = bluetoothManager.getLastConnectedName()
+            }
         }
     }
 }
