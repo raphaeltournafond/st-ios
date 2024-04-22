@@ -32,18 +32,14 @@ struct LoginView: View {
                     .padding(.bottom, 30)
                 Spacer()
                 
-                TextField("Username", text: $username)
-                    .padding()
-                    .background(Color(UIColor.systemGray6))
-                    .cornerRadius(5.0)
-                    .padding(.bottom, 20)
+                InputView(name: "Username", field: $username)
                     .textInputAutocapitalization(.never)
                 
                 SecureField("Password", text: $password)
                     .padding()
                     .background(Color(UIColor.systemGray6))
-                    .cornerRadius(5.0)
-                    .padding(.bottom, 20)
+                    .cornerRadius(15.0)
+                    .padding(.bottom, 10)
                 
                 ButtonView(action: {
                     print("Login IN... username: \(self.username), password: \(self.password)")

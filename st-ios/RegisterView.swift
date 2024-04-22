@@ -34,39 +34,23 @@ struct RegisterView: View {
                 Spacer()
                 
                 HStack {
-                    TextField("First Name", text: $firstName)
-                        .padding()
-                        .background(Color(UIColor.systemGray6))
-                        .cornerRadius(5.0)
-                        .padding(.bottom, 20)
+                    InputView(name: "First Name", field: $firstName)
                     
-                    TextField("Last Name", text: $lastName)
-                        .padding()
-                        .background(Color(UIColor.systemGray6))
-                        .cornerRadius(5.0)
-                        .padding(.bottom, 20)
+                    InputView(name: "Last Name", field: $lastName)
                 }
                 
-                TextField("Username", text: $username)
-                    .padding()
-                    .background(Color(UIColor.systemGray6))
-                    .cornerRadius(5.0)
-                    .padding(.bottom, 20)
+                InputView(name: "Username", field: $username)
                     .textInputAutocapitalization(.never)
                 
-                TextField("Email", text: $email)
-                    .padding()
-                    .background(Color(UIColor.systemGray6))
-                    .cornerRadius(5.0)
-                    .padding(.bottom, 20)
+                InputView(name: "Email", field: $email)
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
                 
                 SecureField("Password", text: $password)
                     .padding()
                     .background(Color(UIColor.systemGray6))
-                    .cornerRadius(5.0)
-                    .padding(.bottom, 20)
+                    .cornerRadius(15.0)
+                    .padding(.bottom, 10)
                 
                 ButtonView(action: {
                     print("First Name: \(self.firstName), Last Name: \(self.lastName), Email: \(self.email), Username: \(self.username), Password: \(self.password)")
