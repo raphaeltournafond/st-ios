@@ -11,11 +11,15 @@ struct LoginView: View {
     @State private var username: String = ""
     @State private var password: String = ""
     @State private var openRegister = false
+    @State private var loggedIn = false
+    @State private var loginFailed = false
     private var accountManager = AccountManager()
     
     var body: some View {
         if openRegister {
             RegisterView()
+        } else if loggedIn {
+            ContentView()
         } else {
             VStack {
                 Spacer()
@@ -37,19 +41,27 @@ struct LoginView: View {
                     .padding(.bottom, 20)
                 
                 ButtonView(action: {
-                    accountManager.login(username: "root", password: "root") { result in
+                    loginFailed = false
+                    accountManager.login(username: username, password: password) { result in
                         switch result {
                         case .success(let isAuthenticated):
                             if isAuthenticated {
                                 print("Login successful")
+                                loggedIn = true
                             } else {
                                 print("Login failed")
+                                loginFailed = true
                             }
                         case .failure(let error):
                             print("Error during login: \(error)")
+                            loginFailed = true
                         }
                     }
                 }, text: "Login")
+                
+                if loginFailed {
+                    Text("Login failed please try again").foregroundStyle(.red)
+                }
                 
                 Button(action: {
                     openRegister = true

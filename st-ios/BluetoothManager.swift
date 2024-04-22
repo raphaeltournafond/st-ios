@@ -153,13 +153,13 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     
     func getLastConnectedUUID() -> String? {
         let lastUUID = UserDefaults.standard.string(forKey: userDefaultsUUIDKey)
-        print("Last connected device: \(lastUUID ?? "None")")
+        print("Last connected device UUID: \(lastUUID ?? "None")")
         return lastUUID
     }
     
     func getLastConnectedName() -> String? {
         let lastName = UserDefaults.standard.string(forKey: userDefaultsNameKey)
-        print("Last connected device: \(lastName ?? "None")")
+        print("Last connected device Name: \(lastName ?? "None")")
         return lastName
     }
     
