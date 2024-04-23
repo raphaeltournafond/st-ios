@@ -20,8 +20,8 @@ class AccountManager: ObservableObject {
     let baseURL = "http://192.168.1.60:8000/"
     
     // Access and refresh tokens
-    private var accessToken: String?
-    private var refreshToken: String?
+    private var accessTokenKey: String = "accessToken"
+    private var refreshTokenKey: String = "refreshToken"
 
     // MARK: - Registration
     func register(firstName: String, lastName: String, email: String, username: String, password: String, completion: @escaping (Result<Bool, Error>) -> Void) {
@@ -41,23 +41,19 @@ class AccountManager: ObservableObject {
         let parameters = ["username": username, "password": password]
         sendRequest(endpoint: "accounts/login/", method: "POST", parameters: parameters) { result in
             switch result {
-            case .success(_):
-                completion(.success(true))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    // MARK: - Fetch User List
-    func fetchUserList(completion: @escaping (Result<[String], Error>) -> Void) {
-        sendRequest(endpoint: "accounts/users/", method: "GET") { result in
-            switch result {
             case .success(let data):
-                if let userList = data as? [String] {
-                    completion(.success(userList))
+                if let json = data as? [String: Any] {
+                    if let refreshToken = json["refresh"] as? String, let accessToken = json["access"] as? String {
+                        UserDefaults.standard.set(refreshToken, forKey: self.refreshTokenKey)
+                        UserDefaults.standard.set(accessToken, forKey: self.accessTokenKey)
+                        completion(.success(true))
+                    } else {
+                        // Handle missing keys in JSON
+                        completion(.failure(LoginError.invalidResponse))
+                    }
                 } else {
-                    completion(.failure(NSError(domain: "ParsingError", code: 0, userInfo: nil)))
+                    // Handle invalid JSON format
+                    completion(.failure(LoginError.invalidResponse))
                 }
             case .failure(let error):
                 completion(.failure(error))
@@ -66,12 +62,12 @@ class AccountManager: ObservableObject {
     }
 
     // MARK: - Fetch User Detail
-    func fetchUserDetail(userID: Int, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+    func fetchUserDetail(userID: Int, completion: @escaping (Result<[[String: Any]], Error>) -> Void) {
         let endpoint = "accounts/users/\(userID)/"
         sendRequest(endpoint: endpoint, method: "GET") { result in
             switch result {
             case .success(let data):
-                if let userDetail = data as? [String: Any] {
+                if let userDetail = data as? [[String: Any]] {
                     completion(.success(userDetail))
                 } else {
                     completion(.failure(NSError(domain: "ParsingError", code: 0, userInfo: nil)))
@@ -82,16 +78,88 @@ class AccountManager: ObservableObject {
         }
     }
     
+    private func tokenVerify(token: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        let parameters = ["token": token]
+        let endpoint = "api/token/verify/"
+        sendRequest(endpoint: endpoint, method: "POST", parameters: parameters) { result in
+            switch result {
+            case .success(_):
+                print("Token valid")
+                completion(.success(true))
+            case .failure(let error):
+                print("Token invalid")
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    private func tokenRefresh(refreshToken: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        let parameters = ["refresh": refreshToken]
+        let endpoint = "api/token/refresh/"
+        sendRequest(endpoint: endpoint, method: "POST", parameters: parameters) { result in
+            switch result {
+            case .success(let data):
+                if let json = data as? [String: Any] {
+                    if let refreshToken = json["refresh"] as? String, let accessToken = json["access"] as? String {
+                        UserDefaults.standard.set(refreshToken, forKey: self.refreshTokenKey)
+                        UserDefaults.standard.set(accessToken, forKey: self.accessTokenKey)
+                        completion(.success(true))
+                    } else {
+                        // Handle missing keys in JSON
+                        completion(.failure(LoginError.invalidResponse))
+                    }
+                } else {
+                    // Handle invalid JSON format
+                    completion(.failure(LoginError.invalidResponse))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func isConnected(completion: @escaping (Bool) -> Void) {
+        if let access = UserDefaults.standard.string(forKey: accessTokenKey), let refresh = UserDefaults.standard.string(forKey: refreshTokenKey) {
+            tokenVerify(token: access) { [self] verifyResult in
+                switch verifyResult {
+                case .success(let accessIsValid):
+                    if accessIsValid {
+                        completion(true)
+                    } else {
+                        tokenRefresh(refreshToken: refresh) { refreshResult in
+                            switch refreshResult {
+                            case .success(let refreshed):
+                                if refreshed {
+                                    completion(true)
+                                } else {
+                                    completion(false)
+                                }
+                            case .failure(_):
+                                completion(false)
+                            }
+                        }
+                    }
+                case .failure(_):
+                    completion(false)
+                }
+            }
+        } else {
+            // Tokens not found, user is not connected
+            completion(false)
+        }
+    }
+
+    
     // MARK: - Send Request
-    private func sendRequest(endpoint: String, method: String, parameters: [String: Any]? = nil, completion: @escaping (Result<Any, Error>) -> Void) {
+    private func sendRequest(endpoint: String, method: String, parameters: [String: Any]? = nil, token: Bool = false, completion: @escaping (Result<Any, Error>) -> Void) {
         let url = URL(string: "\(baseURL)\(endpoint)")!
         print(url)
         var request = URLRequest(url: url)
         request.httpMethod = method
         
         // Add access token if available
-        if let accessToken = accessToken {
-            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        if token, let access = UserDefaults.standard.string(forKey: accessTokenKey) {
+            request.setValue("Bearer \(access)", forHTTPHeaderField: "Authorization")
         }
         
         // Add parameters for POST requests
@@ -127,6 +195,10 @@ class AccountManager: ObservableObject {
             }
         }.resume()
     }
+}
+
+enum LoginError: Error {
+    case invalidResponse
 }
 
 
