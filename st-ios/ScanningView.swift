@@ -9,50 +9,61 @@ import SwiftUI
 
 struct ScanningView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
+    @ObservedObject var accountManager: AccountManager
     @State private var isScanning = false
     @State private var timer: Timer?
     @State private var selectedDeviceUUID: String? = nil
     @State private var selectedDeviceName: String? = nil
 
     var body: some View {
-        if let deviceUUID = selectedDeviceUUID, let deviceName = selectedDeviceName {
-            TrackingView(bluetoothManager: bluetoothManager, deviceUUID: deviceUUID, deviceName: deviceName)
+        if !accountManager.isConnected {
+            LoginView(accountManager: accountManager)
+        } else if let deviceUUID = selectedDeviceUUID, let deviceName = selectedDeviceName {
+            TrackingView(bluetoothManager: bluetoothManager, accountManager: accountManager, deviceUUID: deviceUUID, deviceName: deviceName)
         } else {
-            VStack {
-                Text("Smart Tracker")
-                    .font(.largeTitle)
-                    .padding(.bottom, 30)
-                
-                ButtonView(action: {
-                    toggleScan()
-                },
-                text: isScanning ? "Cancel" : "Start Scanning",
-                           textColor: bluetoothManager.bluetoothState == .poweredOn ? Color.white : Color.secondary,
-                           background: bluetoothManager.bluetoothState == .poweredOn ? Color.blue : Color.accentColor
-                ).disabled(bluetoothManager.bluetoothState != .poweredOn)
-                
-                if bluetoothManager.bluetoothState != .poweredOn {
-                    Text(bluetoothManager.stateMessage)
-                        .foregroundStyle(.red)
-                }
+            NavigationStack {
+                Spacer()
+                VStack {
+                    Text("Smart Tracker")
+                        .font(.largeTitle)
+                        .padding(.bottom, 30)
+                    
+                    ButtonView(action: {
+                        toggleScan()
+                    },
+                    text: isScanning ? "Cancel" : "Start Scanning",
+                               textColor: bluetoothManager.bluetoothState == .poweredOn ? Color.white : Color.secondary,
+                               background: bluetoothManager.bluetoothState == .poweredOn ? Color.blue : Color.accentColor
+                    ).disabled(bluetoothManager.bluetoothState != .poweredOn)
+                    
+                    if bluetoothManager.bluetoothState != .poweredOn {
+                        Text(bluetoothManager.stateMessage)
+                            .foregroundStyle(.red)
+                    }
 
-                List(bluetoothManager.peripherals, id: \.self) { peripheral in
-                    Button(action: {
-                        selectedDeviceUUID = peripheral.identifier.uuidString
-                        selectedDeviceName = peripheral.name ?? "Device"
-                    }) {
-                        Text(peripheral.identifier.uuidString + " - " + (peripheral.name ?? "Unnamed device")).foregroundStyle(Color.black)
+                    List(bluetoothManager.peripherals, id: \.self) { peripheral in
+                        Button(action: {
+                            selectedDeviceUUID = peripheral.identifier.uuidString
+                            selectedDeviceName = peripheral.name ?? "Device"
+                        }) {
+                            Text(peripheral.identifier.uuidString + " - " + (peripheral.name ?? "Unnamed device")).foregroundStyle(Color.black)
+                        }
+                    }
+                    
+                    if isScanning {
+                        ProgressView("Scanning...")
+                            .padding()
                     }
                 }
-                
-                if isScanning {
-                    ProgressView("Scanning...")
-                        .padding()
+                .onDisappear {
+                    self.timer?.invalidate()
+                    self.timer = nil
                 }
             }
-            .onDisappear {
-                self.timer?.invalidate()
-                self.timer = nil
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading, content: {
+                    DisconnectView(accountManager: accountManager)
+                })
             }
         }
     }
@@ -84,6 +95,6 @@ struct ScanningView: View {
 
 struct ScanningView_Previews: PreviewProvider {
     static var previews: some View {
-        ScanningView(bluetoothManager: BluetoothManager())
+        ScanningView(bluetoothManager: BluetoothManager(), accountManager: AccountManager())
     }
 }

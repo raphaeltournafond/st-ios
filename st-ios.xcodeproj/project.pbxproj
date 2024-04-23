@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AE3A0BE92BD84D3F0074AEB3 /* DisconnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE3A0BE82BD84D3F0074AEB3 /* DisconnectView.swift */; };
 		AEA40D752BD403E3001158A3 /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA40D742BD403E3001158A3 /* ChartView.swift */; };
 		AEE232E22BCFB6BC00A1C071 /* st_iosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE232E12BCFB6BC00A1C071 /* st_iosApp.swift */; };
 		AEE232E42BCFB6BC00A1C071 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE232E32BCFB6BC00A1C071 /* ContentView.swift */; };
@@ -43,6 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AE3A0BE82BD84D3F0074AEB3 /* DisconnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectView.swift; sourceTree = "<group>"; };
 		AEA40D742BD403E3001158A3 /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 		AEE232DE2BCFB6BC00A1C071 /* st-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "st-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AEE232E12BCFB6BC00A1C071 /* st_iosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = st_iosApp.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 				AEE233192BD27E0200A1C071 /* AccountManager.swift */,
 				AEA40D742BD403E3001158A3 /* ChartView.swift */,
 				AEEBDC582BD68F860020D0F9 /* InputView.swift */,
+				AE3A0BE82BD84D3F0074AEB3 /* DisconnectView.swift */,
 			);
 			path = "st-ios";
 			sourceTree = "<group>";
@@ -292,6 +295,7 @@
 				AEE233122BD242F600A1C071 /* ButtonView.swift in Sources */,
 				AEE2330C2BD13B7300A1C071 /* TrackingView.swift in Sources */,
 				AEE2331A2BD27E0200A1C071 /* AccountManager.swift in Sources */,
+				AE3A0BE92BD84D3F0074AEB3 /* DisconnectView.swift in Sources */,
 				AEE233182BD2743500A1C071 /* RegisterView.swift in Sources */,
 				AEE232E22BCFB6BC00A1C071 /* st_iosApp.swift in Sources */,
 				AEE233102BD148C900A1C071 /* BluetoothManager.swift in Sources */,

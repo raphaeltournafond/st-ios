@@ -12,27 +12,26 @@ struct ContentView: View {
     @ObservedObject var accountManager = AccountManager()
     @State private var lastUUID: String? = nil
     @State private var lastName: String? = nil
-    @State private var isConnected: Bool?
 
     var body: some View {
         // Check if isConnected
-        if isConnected == nil {
+        if accountManager.isConnected == nil {
             // determine the connection status
             ProgressView()
                 .onAppear {
-                    accountManager.isConnected { connected in
-                        isConnected = connected
+                    accountManager.checkConnection { connected in
+                        print("Connexion status: \(connected)")
                     }
                 }
-        } else if isConnected == false {
+        } else if accountManager.isConnected == false {
             LoginView(accountManager: accountManager)
         } else {
             // isConnected
             NavigationStack {
                 if let uuid = lastUUID, let name = lastName {
-                    TrackingView(bluetoothManager: bluetoothManager, deviceUUID: uuid, deviceName: name)
+                    TrackingView(bluetoothManager: bluetoothManager, accountManager: accountManager, deviceUUID: uuid, deviceName: name)
                 } else {
-                    ScanningView(bluetoothManager: bluetoothManager)
+                    ScanningView(bluetoothManager: bluetoothManager, accountManager: accountManager)
                 }
             }
             .onAppear {

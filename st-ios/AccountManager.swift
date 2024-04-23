@@ -22,6 +22,8 @@ class AccountManager: ObservableObject {
     // Access and refresh tokens
     private var accessTokenKey: String = "accessToken"
     private var refreshTokenKey: String = "refreshToken"
+    
+    @Published var isConnected: Bool? = nil
 
     // MARK: - Registration
     func register(firstName: String, lastName: String, email: String, username: String, password: String, completion: @escaping (Result<Bool, Error>) -> Void) {
@@ -38,6 +40,7 @@ class AccountManager: ObservableObject {
 
     // MARK: - Login
     func login(username: String, password: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        disconnect()
         let parameters = ["username": username, "password": password]
         sendRequest(endpoint: "accounts/login/", method: "POST", parameters: parameters) { result in
             switch result {
@@ -46,6 +49,9 @@ class AccountManager: ObservableObject {
                     if let refreshToken = json["refresh"] as? String, let accessToken = json["access"] as? String {
                         UserDefaults.standard.set(refreshToken, forKey: self.refreshTokenKey)
                         UserDefaults.standard.set(accessToken, forKey: self.accessTokenKey)
+                        DispatchQueue.main.async {
+                            self.isConnected = true
+                        }
                         completion(.success(true))
                     } else {
                         // Handle missing keys in JSON
@@ -118,7 +124,8 @@ class AccountManager: ObservableObject {
         }
     }
     
-    func isConnected(completion: @escaping (Bool) -> Void) {
+    func checkConnection(completion: @escaping (Bool) -> Void) {
+        isConnected = false
         if let access = UserDefaults.standard.string(forKey: accessTokenKey), let refresh = UserDefaults.standard.string(forKey: refreshTokenKey) {
             tokenVerify(token: access) { [self] verifyResult in
                 switch verifyResult {
@@ -130,6 +137,9 @@ class AccountManager: ObservableObject {
                             switch refreshResult {
                             case .success(let refreshed):
                                 if refreshed {
+                                    DispatchQueue.main.async {
+                                        self.isConnected = true
+                                    }
                                     completion(true)
                                 } else {
                                     completion(false)
@@ -144,11 +154,15 @@ class AccountManager: ObservableObject {
                 }
             }
         } else {
-            // Tokens not found, user is not connected
             completion(false)
         }
     }
-
+    
+    func disconnect() {
+        isConnected = false
+        UserDefaults.standard.removeObject(forKey: accessTokenKey)
+        UserDefaults.standard.removeObject(forKey: refreshTokenKey)
+    }
     
     // MARK: - Send Request
     private func sendRequest(endpoint: String, method: String, parameters: [String: Any]? = nil, token: Bool = false, completion: @escaping (Result<Any, Error>) -> Void) {
