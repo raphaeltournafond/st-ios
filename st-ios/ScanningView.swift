@@ -16,7 +16,7 @@ struct ScanningView: View {
     @State private var selectedDeviceName: String? = nil
 
     var body: some View {
-        if !accountManager.isConnected {
+        if accountManager.isConnected == false {
             LoginView(accountManager: accountManager)
         } else if let deviceUUID = selectedDeviceUUID, let deviceName = selectedDeviceName {
             TrackingView(bluetoothManager: bluetoothManager, accountManager: accountManager, deviceUUID: deviceUUID, deviceName: deviceName)

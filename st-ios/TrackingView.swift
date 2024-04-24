@@ -20,7 +20,7 @@ struct TrackingView: View {
     let deviceName: String
 
     var body: some View {
-        if !accountManager.isConnected {
+        if accountManager.isConnected == false {
             LoginView(accountManager: accountManager)
         } else {
             VStack {
