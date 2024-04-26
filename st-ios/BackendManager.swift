@@ -31,7 +31,7 @@ class BackendManager: ObservableObject {
     private var refreshTokenKey: String = "refreshToken"
     
     @Published var isConnected: Bool? = nil
-    @Published var connectedUserID: Int? = nil
+    @Published var connectedUserID: String? = nil
     
 
     // MARK: - ACCOUNT
@@ -190,7 +190,7 @@ class BackendManager: ObservableObject {
                 if let json = tokenPayload as? [String: Any] {
                     if let user_id = json["user_id"] as? Int {
                         DispatchQueue.main.async {
-                            self.connectedUserID = user_id
+                            self.connectedUserID = String(user_id)
                             print(self.connectedUserID ?? "Couldn't find user_id")
                         }
                     }
@@ -202,23 +202,28 @@ class BackendManager: ObservableObject {
     }
     
     func disconnect() {
-        isConnected = false
         UserDefaults.standard.removeObject(forKey: accessTokenKey)
         UserDefaults.standard.removeObject(forKey: refreshTokenKey)
+        isConnected = false
+        addSession(data: "Test") { result in
+            print(result)
+        }
     }
     
     // MARK: - SESSIONS
     func addSession(data: String, completion: @escaping (Result<Bool, Error>) -> Void) {
         let endpoint = "st/sessions/"
-        let parameters = ["start_date": "Date()", "end_date": "Date()", "data": data, "user_id": "1"]
-        sendRequest(endpoint: endpoint, method: "POST", parameters: parameters, token: true) { result in
-            switch result {
-            case .success(_):
-                print("Session added")
-                completion(.success(true))
-            case .failure(let error):
-                print("Error, session is not saved")
-                completion(.failure(error))
+        if let user_id = connectedUserID {
+            let parameters = ["start_date": "Date()", "end_date": "Date()", "data": data, "user_id": user_id]
+            sendRequest(endpoint: endpoint, method: "POST", parameters: parameters, token: true) { result in
+                switch result {
+                case .success(_):
+                    print("Session added")
+                    completion(.success(true))
+                case .failure(let error):
+                    print("Error, session is not saved")
+                    completion(.failure(error))
+                }
             }
         }
     }
