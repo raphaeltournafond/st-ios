@@ -31,6 +31,7 @@ class BackendManager: ObservableObject {
     private var refreshTokenKey: String = "refreshToken"
     
     @Published var isConnected: Bool? = nil
+    @Published var connectedUserID: Int? = nil
     
 
     // MARK: - ACCOUNT
@@ -186,6 +187,14 @@ class BackendManager: ObservableObject {
             switch result {
             case .success(let tokenPayload):
                 print(tokenPayload)
+                if let json = tokenPayload as? [String: Any] {
+                    if let user_id = json["user_id"] as? Int {
+                        DispatchQueue.main.async {
+                            self.connectedUserID = user_id
+                            print(self.connectedUserID ?? "Couldn't find user_id")
+                        }
+                    }
+                }
             case .failure(_):
                 print("Error, session is not saved")
             }
@@ -201,7 +210,7 @@ class BackendManager: ObservableObject {
     // MARK: - SESSIONS
     func addSession(data: String, completion: @escaping (Result<Bool, Error>) -> Void) {
         let endpoint = "st/sessions/"
-        let parameters = ["start_date": "Date()", "end_date": "Date()", "data": data]
+        let parameters = ["start_date": "Date()", "end_date": "Date()", "data": data, "user_id": "1"]
         sendRequest(endpoint: endpoint, method: "POST", parameters: parameters, token: true) { result in
             switch result {
             case .success(_):
