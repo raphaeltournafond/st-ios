@@ -160,6 +160,7 @@ struct TrackingView: View {
     
     func appendData(data: String) {
         let components = data.components(separatedBy: ",")
+        self.data.append(data)
         if components.count == 3,
            let x = Double(components[0]),
            let y = Double(components[1]),
