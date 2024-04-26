@@ -8,9 +8,9 @@
 import Foundation
 
 struct Session {
-    let start_date: String
-    let end_date: String?
-    let data: String
+    var start_date: String
+    var end_date: String? = nil
+    var data: String? = nil
 }
 
 class BackendManager: ObservableObject {
@@ -200,8 +200,8 @@ class BackendManager: ObservableObject {
     // MARK: - SESSIONS
     func addSession(session: Session, completion: @escaping (Result<Bool, Error>) -> Void) {
         let endpoint = "st/sessions/"
-        if let user_id = connectedUserID {
-            let parameters = ["start_date": session.start_date, "end_date": session.end_date ?? Date().timeIntervalSince1970, "data": session.data, "user": user_id] as [String : Any]
+        if let user_id = connectedUserID, let data = session.data {
+            let parameters = ["start_date": session.start_date, "end_date": session.end_date ?? String(Date().timeIntervalSince1970), "data": data, "user": user_id] as [String : Any]
             print(parameters)
             sendRequest(endpoint: endpoint, method: "POST", parameters: parameters, token: true) { result in
                 switch result {

@@ -16,6 +16,7 @@ struct TrackingView: View {
     @State private var connectionError = false
     @State private var askForScanning = false
     @State private var showForgetAlert = false
+    @State private var currentSession: Session? = nil
     let deviceUUID: String
     let deviceName: String
 
@@ -123,16 +124,18 @@ struct TrackingView: View {
     }
 
     func startTracking() {
-        saveSession()
         tryConnecting()
         isTracking = true
         bluetoothManager.isTracking = true
+        currentSession = Session(start_date: String(Date().timeIntervalSince1970))
     }
     
     func stopTracking() {
+        currentSession?.end_date = String(Date().timeIntervalSince1970)
         bluetoothManager.disconnectFromPeripheral()
         isTracking = false
         bluetoothManager.isTracking = false
+        saveSession()
     }
     
     func forgetAndScan() {
@@ -153,8 +156,12 @@ struct TrackingView: View {
     }
     
     func saveSession() {
-        accountManager.addSession(data: "Test") { result in
-            print(result)
+        if let session = currentSession {
+            if session.data != nil {
+                accountManager.addSession(session: session) { result in
+                    print(result)
+                }
+            }
         }
     }
 }
