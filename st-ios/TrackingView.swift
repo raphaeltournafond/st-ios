@@ -123,6 +123,7 @@ struct TrackingView: View {
     }
 
     func startTracking() {
+        saveSession()
         tryConnecting()
         isTracking = true
         bluetoothManager.isTracking = true
@@ -152,7 +153,9 @@ struct TrackingView: View {
     }
     
     func saveSession() {
-        
+        accountManager.addSession(data: "Test") { result in
+            print(result)
+        }
     }
 }
 
