@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TrackingView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
-    @ObservedObject var accountManager: AccountManager
+    @ObservedObject var accountManager: BackendManager
     @StateObject var chartViewModel = ChartViewModel()
     @State private var isTracking = false
     @State private var isConnecting = false
@@ -149,5 +149,15 @@ struct TrackingView: View {
             chartViewModel.appendData(dataPoint: AccelerometerData(value: y, axis: "Y"))
             chartViewModel.appendData(dataPoint: AccelerometerData(value: z, axis: "Z"))
         }
+    }
+    
+    func saveSession() {
+        
+    }
+}
+
+struct TrackingView_Previews: PreviewProvider {
+    static var previews: some View {
+        TrackingView(bluetoothManager: BluetoothManager(), accountManager: BackendManager(), deviceUUID: "12345", deviceName: "MacBook")
     }
 }

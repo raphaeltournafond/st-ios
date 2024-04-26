@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var bluetoothManager = BluetoothManager()
-    @ObservedObject var accountManager = AccountManager()
+    @ObservedObject var accountManager = BackendManager()
     @State private var lastUUID: String? = nil
     @State private var lastName: String? = nil
 

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ScanningView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
-    @ObservedObject var accountManager: AccountManager
+    @ObservedObject var accountManager: BackendManager
     @State private var isScanning = false
     @State private var timer: Timer?
     @State private var selectedDeviceUUID: String? = nil
@@ -95,6 +95,6 @@ struct ScanningView: View {
 
 struct ScanningView_Previews: PreviewProvider {
     static var previews: some View {
-        ScanningView(bluetoothManager: BluetoothManager(), accountManager: AccountManager())
+        ScanningView(bluetoothManager: BluetoothManager(), accountManager: BackendManager())
     }
 }

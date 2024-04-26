@@ -16,9 +16,9 @@ struct RegisterView: View {
     @State private var password: String = ""
     @State private var openLogin: Bool = false
     @State private var registerFailed: Bool = false
-    private var accountManager: AccountManager
+    private var accountManager: BackendManager
     
-    init(accountManager: AccountManager) {
+    init(accountManager: BackendManager) {
         self.accountManager = accountManager
     }
     
@@ -104,6 +104,6 @@ struct RegisterView: View {
 
 struct RegisterView_Previews: PreviewProvider {
     static var previews: some View {
-        RegisterView(accountManager: AccountManager())
+        RegisterView(accountManager: BackendManager())
     }
 }

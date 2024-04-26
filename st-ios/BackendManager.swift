@@ -15,7 +15,7 @@ struct User {
     let email: String
 }
 
-class AccountManager: ObservableObject {
+class BackendManager: ObservableObject {
     // Base URL of your Django backend
     let baseURL = "http://192.168.1.60:8000/"
     

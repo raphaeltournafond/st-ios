@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct DisconnectView: View {
-    private var accountManager: AccountManager
+    private var accountManager: BackendManager
     
-    init(accountManager: AccountManager) {
+    init(accountManager: BackendManager) {
         self.accountManager = accountManager
     }
 
@@ -27,6 +27,6 @@ struct DisconnectView: View {
 
 struct DisconnectView_Previews: PreviewProvider {
     static var previews: some View {
-        DisconnectView(accountManager: AccountManager())
+        DisconnectView(accountManager: BackendManager())
     }
 }

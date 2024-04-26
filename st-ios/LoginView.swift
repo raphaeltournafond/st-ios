@@ -13,9 +13,9 @@ struct LoginView: View {
     @State private var openRegister: Bool = false
     @State private var loggedIn: Bool = false
     @State private var loginFailed: Bool = false
-    private var accountManager: AccountManager
+    private var accountManager: BackendManager
     
-    init(accountManager: AccountManager) {
+    init(accountManager: BackendManager) {
         self.accountManager = accountManager
     }
     
@@ -80,6 +80,6 @@ struct LoginView: View {
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView(accountManager: AccountManager())
+        LoginView(accountManager: BackendManager())
     }
 }
