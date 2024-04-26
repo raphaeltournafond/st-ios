@@ -19,7 +19,7 @@ struct ContentView: View {
             // determine the connection status
             ProgressView()
                 .onAppear {
-                    accountManager.checkConnection { connected in
+                    accountManager.initiateConnexion { connected in
                         print("Connexion status: \(connected)")
                     }
                 }

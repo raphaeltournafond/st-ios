@@ -32,7 +32,6 @@ class BackendManager: ObservableObject {
     
     @Published var isConnected: Bool? = nil
     
-    
 
     // MARK: - ACCOUNT
     
@@ -62,10 +61,9 @@ class BackendManager: ObservableObject {
                     if let refreshToken = json["refresh"] as? String, let accessToken = json["access"] as? String {
                         UserDefaults.standard.set(refreshToken, forKey: self.refreshTokenKey)
                         UserDefaults.standard.set(accessToken, forKey: self.accessTokenKey)
-                        DispatchQueue.main.async {
-                            self.isConnected = true
+                        self.initiateConnexion() { result in
+                            completion(result ? .success(true) : .failure(LoginError.invalidResponse))
                         }
-                        completion(.success(true))
                     } else {
                         // Handle missing keys in JSON
                         completion(.failure(LoginError.invalidResponse))
@@ -139,12 +137,13 @@ class BackendManager: ObservableObject {
         }
     }
     
-    func checkConnection(completion: @escaping (Bool) -> Void) {
+    func initiateConnexion(completion: @escaping (Bool) -> Void) {
         if let access = UserDefaults.standard.string(forKey: accessTokenKey), let refresh = UserDefaults.standard.string(forKey: refreshTokenKey) {
             tokenVerify(token: access) { [self] verifyResult in
                 switch verifyResult {
                 case .success(let accessIsValid):
                     if accessIsValid {
+                        self.tokenDecode()
                         DispatchQueue.main.async {
                             self.isConnected = true
                         }
@@ -154,6 +153,7 @@ class BackendManager: ObservableObject {
                             switch refreshResult {
                             case .success(let refreshed):
                                 if refreshed {
+                                    self.tokenDecode()
                                     DispatchQueue.main.async {
                                         self.isConnected = true
                                     }
@@ -180,16 +180,14 @@ class BackendManager: ObservableObject {
     }
     
     // MARK: - decode
-    func tokenDecode(completion: @escaping (Result<Bool, Error>) -> Void) {
+    func tokenDecode() -> Void {
         let endpoint = "accounts/users/decode/"
-        sendRequest(endpoint: endpoint, method: "POST", token: true) { result in
+        sendRequest(endpoint: endpoint, method: "GET", token: true) { result in
             switch result {
             case .success(let tokenPayload):
                 print(tokenPayload)
-                completion(.success(true))
-            case .failure(let error):
+            case .failure(_):
                 print("Error, session is not saved")
-                completion(.failure(error))
             }
         }
     }
