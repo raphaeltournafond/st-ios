@@ -7,18 +7,9 @@
 
 import Foundation
 
-struct User {
-    let id: Int
-    let firstName: String
-    let lastName: String
-    let username: String
-    let email: String
-}
-
 struct Session {
-    let id: Int
     let start_date: String
-    let end_date: String
+    let end_date: String?
     let data: String
 }
 
