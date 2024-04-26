@@ -15,6 +15,13 @@ struct User {
     let email: String
 }
 
+struct Session {
+    let id: Int
+    let start_date: String
+    let end_date: String
+    let data: String
+}
+
 class BackendManager: ObservableObject {
     // Base URL of your Django backend
     let baseURL = "http://192.168.1.60:8000/"
@@ -24,8 +31,14 @@ class BackendManager: ObservableObject {
     private var refreshTokenKey: String = "refreshToken"
     
     @Published var isConnected: Bool? = nil
+    
+    
 
-    // MARK: - Registration
+    // MARK: - ACCOUNT
+    
+    
+    
+    // MARK: - register
     func register(firstName: String, lastName: String, email: String, username: String, password: String, completion: @escaping (Result<Bool, Error>) -> Void) {
         let parameters = ["first_name": firstName,"last_name": lastName, "email": email, "username": username, "password": password]
         sendRequest(endpoint: "accounts/register/", method: "POST", parameters: parameters) { result in
@@ -38,7 +51,7 @@ class BackendManager: ObservableObject {
         }
     }
 
-    // MARK: - Login
+    // MARK: - login
     func login(username: String, password: String, completion: @escaping (Result<Bool, Error>) -> Void) {
         disconnect()
         let parameters = ["username": username, "password": password]
@@ -67,7 +80,7 @@ class BackendManager: ObservableObject {
         }
     }
 
-    // MARK: - Fetch User Detail
+    // MARK: - user
     func fetchUserDetail(userID: Int, completion: @escaping (Result<[[String: Any]], Error>) -> Void) {
         let endpoint = "accounts/users/\(userID)/"
         sendRequest(endpoint: endpoint, method: "GET") { result in
@@ -84,6 +97,7 @@ class BackendManager: ObservableObject {
         }
     }
     
+    // MARK: - verify
     private func tokenVerify(token: String, completion: @escaping (Result<Bool, Error>) -> Void) {
         let parameters = ["token": token]
         let endpoint = "api/token/verify/"
@@ -99,6 +113,7 @@ class BackendManager: ObservableObject {
         }
     }
     
+    // MARK: - refresh
     private func tokenRefresh(refreshToken: String, completion: @escaping (Result<Bool, Error>) -> Void) {
         let parameters = ["refresh": refreshToken]
         let endpoint = "api/token/refresh/"
@@ -125,12 +140,14 @@ class BackendManager: ObservableObject {
     }
     
     func checkConnection(completion: @escaping (Bool) -> Void) {
-        isConnected = false
         if let access = UserDefaults.standard.string(forKey: accessTokenKey), let refresh = UserDefaults.standard.string(forKey: refreshTokenKey) {
             tokenVerify(token: access) { [self] verifyResult in
                 switch verifyResult {
                 case .success(let accessIsValid):
                     if accessIsValid {
+                        DispatchQueue.main.async {
+                            self.isConnected = true
+                        }
                         completion(true)
                     } else {
                         tokenRefresh(refreshToken: refresh) { refreshResult in
@@ -142,19 +159,38 @@ class BackendManager: ObservableObject {
                                     }
                                     completion(true)
                                 } else {
+                                    self.isConnected = false
                                     completion(false)
                                 }
                             case .failure(_):
+                                self.isConnected = false
                                 completion(false)
                             }
                         }
                     }
                 case .failure(_):
+                    self.isConnected = false
                     completion(false)
                 }
             }
         } else {
+            self.isConnected = false
             completion(false)
+        }
+    }
+    
+    // MARK: - decode
+    func tokenDecode(completion: @escaping (Result<Bool, Error>) -> Void) {
+        let endpoint = "accounts/users/decode/"
+        sendRequest(endpoint: endpoint, method: "POST", token: true) { result in
+            switch result {
+            case .success(let tokenPayload):
+                print(tokenPayload)
+                completion(.success(true))
+            case .failure(let error):
+                print("Error, session is not saved")
+                completion(.failure(error))
+            }
         }
     }
     
@@ -164,7 +200,24 @@ class BackendManager: ObservableObject {
         UserDefaults.standard.removeObject(forKey: refreshTokenKey)
     }
     
-    // MARK: - Send Request
+    // MARK: - SESSIONS
+    func addSession(data: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+        let endpoint = "st/sessions/"
+        let parameters = ["start_date": "Date()", "end_date": "Date()", "data": data]
+        sendRequest(endpoint: endpoint, method: "POST", parameters: parameters, token: true) { result in
+            switch result {
+            case .success(_):
+                print("Session added")
+                completion(.success(true))
+            case .failure(let error):
+                print("Error, session is not saved")
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    
+    // MARK: - REQUEST
     private func sendRequest(endpoint: String, method: String, parameters: [String: Any]? = nil, token: Bool = false, completion: @escaping (Result<Any, Error>) -> Void) {
         let url = URL(string: "\(baseURL)\(endpoint)")!
         print(url)
