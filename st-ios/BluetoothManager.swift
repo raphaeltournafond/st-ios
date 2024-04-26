@@ -17,7 +17,6 @@ class BluetoothManager: NSObject, ObservableObject, CBCentralManagerDelegate, CB
     @Published var bluetoothState: CBManagerState = .unknown // Track Bluetooth state
     @Published var connectedPeripheral: CBPeripheral?
     @Published var targetPeripheral: CBPeripheral?
-    @Published var isTracking: Bool = false
     private var centralManager: CBCentralManager!
     private var targetPeripheralUUID: String?
     private var onBluetoothStateUpdate: ((CBManagerState) -> Void)?

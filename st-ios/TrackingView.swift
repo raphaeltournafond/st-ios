@@ -127,8 +127,13 @@ struct TrackingView: View {
     func startTracking() {
         tryConnecting()
         isTracking = true
-        bluetoothManager.isTracking = true
-        currentSession = Session(start_date: String(Date().timeIntervalSince1970))
+        if currentSession == nil { // Create session only if not already started
+            currentSession = Session(start_date: String(Date().timeIntervalSince1970))
+        }
+    }
+    
+    func pauseTracking() {
+        isTracking = false
     }
     
     func stopTracking() {
@@ -138,7 +143,6 @@ struct TrackingView: View {
         }
         bluetoothManager.disconnectFromPeripheral()
         isTracking = false
-        bluetoothManager.isTracking = false
         saveSession()
     }
     
@@ -148,9 +152,9 @@ struct TrackingView: View {
                 accountManager.addSession(session: session) { result in
                     print(result)
                 }
-                self.data = [] // Reset array after save
             }
         }
+        self.currentSession = nil // Reset session after save
     }
     
     func forgetAndScan() {
