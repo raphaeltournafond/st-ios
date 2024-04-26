@@ -11,6 +11,19 @@ struct Session {
     var start_date: String
     var end_date: String? = nil
     var data: String? = nil
+    
+    mutating func setDataArrayToJSONString(data: [String]) {
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: data, options: [])
+                
+            // Convert JSON data to a string
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                self.data = jsonString
+            }
+        } catch {
+            print("Error converting array to JSON: \(error)")
+        }
+    }
 }
 
 class BackendManager: ObservableObject {
