@@ -11,11 +11,13 @@ struct TrackingView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
     @ObservedObject var accountManager: BackendManager
     @StateObject var chartViewModel = ChartViewModel()
+    @State private var isSessionRunning = false
     @State private var isTracking = false
     @State private var isConnecting = false
     @State private var connectionError = false
     @State private var askForScanning = false
     @State private var showForgetAlert = false
+    @State private var showSaveAlert = false
     @State private var currentSession: Session? = nil
     @State private var data: [String] = []
     let deviceUUID: String
@@ -34,7 +36,7 @@ struct TrackingView: View {
                 } else {
                     if !connectionError {
                         
-                        if !isTracking {
+                        if !isSessionRunning {
                             Text("\(deviceName) selected for tracking")
                                 .padding()
                             
@@ -69,8 +71,21 @@ struct TrackingView: View {
                             Text(bluetoothManager.lastData ?? "")
                             
                             ButtonView(action: {
-                                stopTracking()
-                            }, text: "Stop tracking", background: .red)
+                                showSaveAlert = true
+                                isTracking = false
+                            }, text: "Pause tracking", background: .red)
+                            .alert(isPresented: $showSaveAlert) {
+                                Alert(
+                                    title: Text("Paused"),
+                                    message: Text("Session paused do you want to save?"),
+                                    primaryButton: .default(Text("Save")) {
+                                        stopTracking()
+                                    },
+                                    secondaryButton: .cancel() {
+                                        isTracking = true
+                                    }
+                                )
+                            }
                         }
                     } else {
                         Text("Couldn't connect to \(bluetoothManager.targetPeripheral?.name ?? "device")")
@@ -126,14 +141,11 @@ struct TrackingView: View {
 
     func startTracking() {
         tryConnecting()
+        isSessionRunning = true
         isTracking = true
         if currentSession == nil { // Create session only if not already started
             currentSession = Session(start_date: String(Date().timeIntervalSince1970))
         }
-    }
-    
-    func pauseTracking() {
-        isTracking = false
     }
     
     func stopTracking() {
@@ -142,7 +154,7 @@ struct TrackingView: View {
             currentSession?.setDataArrayToJSONString(data: data)
         }
         bluetoothManager.disconnectFromPeripheral()
-        isTracking = false
+        isSessionRunning = false
         saveSession()
     }
     
