@@ -198,10 +198,10 @@ class BackendManager: ObservableObject {
     }
     
     // MARK: - SESSIONS
-    func addSession(data: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+    func addSession(session: Session, completion: @escaping (Result<Bool, Error>) -> Void) {
         let endpoint = "st/sessions/"
         if let user_id = connectedUserID {
-            let parameters = ["start_date": "2024-04-21 17:20:23", "end_date": "2024-04-21 17:20:23", "data": data, "user": user_id] as [String : Any]
+            let parameters = ["start_date": session.start_date, "end_date": session.end_date ?? Date().timeIntervalSince1970, "data": session.data, "user": user_id] as [String : Any]
             print(parameters)
             sendRequest(endpoint: endpoint, method: "POST", parameters: parameters, token: true) { result in
                 switch result {
