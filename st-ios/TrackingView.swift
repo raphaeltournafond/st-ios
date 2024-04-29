@@ -111,7 +111,7 @@ struct TrackingView: View {
                 }
             }
             .onReceive(bluetoothManager.$lastData) { newData in
-                if let newData = newData {
+                if isTracking, let newData = newData {
                     appendData(data: newData)
                 }
             }
