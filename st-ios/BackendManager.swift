@@ -28,7 +28,7 @@ struct Session {
 
 class BackendManager: ObservableObject {
     // Base URL of your Django backend
-    let baseURL = "http://192.168.1.60:8000/"
+    let baseURL = "http://172.20.10.2:8000/"
     
     // Access and refresh tokens
     private var accessTokenKey: String = "accessToken"

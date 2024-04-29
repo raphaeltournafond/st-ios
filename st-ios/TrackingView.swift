@@ -26,90 +26,87 @@ struct TrackingView: View {
     var body: some View {
         if accountManager.isConnected == false {
             LoginView(accountManager: accountManager)
+        } else if askForScanning {
+            ScanningView(bluetoothManager: bluetoothManager, accountManager: accountManager)
+        } else if isConnecting {
+            ProgressView("Connecting to \(deviceName == "Unknown" ? deviceUUID : deviceName)")
+                .padding()
         } else {
             VStack {
-                if askForScanning {
-                    ScanningView(bluetoothManager: bluetoothManager, accountManager: accountManager)
-                } else if isConnecting {
-                    ProgressView("Connecting to \(deviceName == "Unknown" ? deviceUUID : deviceName)")
-                        .padding()
-                } else {
-                    if !connectionError {
-                        
-                        if !isSessionRunning {
-                            Text("\(deviceName) selected for tracking")
-                                .padding()
-                            
-                            ButtonView(action: {
-                                startTracking()
-                            }, text: "Start tracking", background: .green)
-                            
-                            Button(action: {
-                                showForgetAlert = true
-                            }) {
-                                Text("Forget device")
-                            }
-                            .alert(isPresented: $showForgetAlert) {
-                                Alert(
-                                    title: Text("Are you sure?"),
-                                    message: Text("This action will forget the device."),
-                                    primaryButton: .destructive(Text("Forget")) {
-                                        forgetAndScan()
-                                    },
-                                    secondaryButton: .cancel()
-                                )
-                            }
-                            
-                        } else {
-                            Text("Connected to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
-                                .padding()
-                            
-                            ChartView()
-                                .environmentObject(chartViewModel)
-                                .padding()
-                            
-                            Text(bluetoothManager.lastData ?? "")
-                            
-                            ButtonView(action: {
-                                showSaveAlert = true
-                                isTracking = false
-                            }, text: "Pause tracking", background: .red)
-                            .alert(isPresented: $showSaveAlert) {
-                                Alert(
-                                    title: Text("Paused"),
-                                    message: Text("Session paused do you want to save?"),
-                                    primaryButton: .default(Text("Save")) {
-                                        stopTracking()
-                                    },
-                                    secondaryButton: .cancel() {
-                                        isTracking = true
-                                    }
-                                )
-                            }
-                        }
-                    } else {
-                        Text("Couldn't connect to \(bluetoothManager.targetPeripheral?.name ?? "device")")
+                if !connectionError {
+                    if !isSessionRunning {
+                        Text("\(deviceName) selected for tracking")
                             .padding()
                         
                         ButtonView(action: {
-                            tryConnecting()
-                        }, text: "Try again")
+                            startTracking()
+                        }, text: "Start tracking", background: .green)
                         
                         Button(action: {
                             showForgetAlert = true
                         }) {
-                            Text("Select another device")
+                            Text("Forget device")
                         }
                         .alert(isPresented: $showForgetAlert) {
                             Alert(
-                                title: Text("Confirm?"),
-                                message: Text("You will be redirected to the scanning screen"),
-                                primaryButton: .default(Text("OK")) {
+                                title: Text("Are you sure?"),
+                                message: Text("This action will forget the device."),
+                                primaryButton: .destructive(Text("Forget")) {
                                     forgetAndScan()
                                 },
                                 secondaryButton: .cancel()
                             )
                         }
+                        
+                    } else {
+                        Text("Connected to \(bluetoothManager.connectedPeripheral?.name ?? "device")")
+                            .padding()
+                        
+                        ChartView()
+                            .environmentObject(chartViewModel)
+                            .padding()
+                        
+                        Text(bluetoothManager.lastData ?? "")
+                        
+                        ButtonView(action: {
+                            showSaveAlert = true
+                            isTracking = false
+                        }, text: "Pause tracking", background: .red)
+                        .alert(isPresented: $showSaveAlert) {
+                            Alert(
+                                title: Text("Paused"),
+                                message: Text("Session paused do you want to save?"),
+                                primaryButton: .default(Text("Save")) {
+                                    stopTracking()
+                                },
+                                secondaryButton: .cancel() {
+                                    isTracking = true
+                                }
+                            )
+                        }
+                    }
+                } else {
+                    Text("Couldn't connect to \(bluetoothManager.targetPeripheral?.name ?? "device")")
+                        .padding()
+                    
+                    ButtonView(action: {
+                        tryConnecting()
+                    }, text: "Try again")
+                    
+                    Button(action: {
+                        showForgetAlert = true
+                    }) {
+                        Text("Select another device")
+                    }
+                    .alert(isPresented: $showForgetAlert) {
+                        Alert(
+                            title: Text("Confirm?"),
+                            message: Text("You will be redirected to the scanning screen"),
+                            primaryButton: .default(Text("OK")) {
+                                forgetAndScan()
+                            },
+                            secondaryButton: .cancel()
+                        )
                     }
                 }
             }
