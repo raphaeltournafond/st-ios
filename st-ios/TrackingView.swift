@@ -147,6 +147,7 @@ struct TrackingView: View {
         currentSession?.end_date = String(Date().timeIntervalSince1970)
         if !self.data.isEmpty {
             currentSession?.setDataArrayToJSONString(data: data)
+            data = [] // Reset session data
         }
         bluetoothManager.disconnectFromPeripheral()
         isSessionRunning = false
