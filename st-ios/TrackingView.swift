@@ -66,8 +66,6 @@ struct TrackingView: View {
                             .environmentObject(chartViewModel)
                             .padding()
                         
-                        Text(bluetoothManager.lastData ?? "")
-                        
                         ButtonView(action: {
                             showSaveAlert = true
                             isTracking = false
