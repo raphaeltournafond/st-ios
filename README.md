@@ -1,2 +1,2 @@
 # st-ios
-The iOS version of the smart tracker app
+The Swift iOS App of the Smart Tracker
